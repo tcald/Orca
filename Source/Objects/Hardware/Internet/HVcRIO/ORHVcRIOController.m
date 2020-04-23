@@ -38,6 +38,21 @@
 {
     [[queueValueBar xAxis] setRngLimitsLow:0 withHigh:300 withMinRng:10];
     [[queueValueBar xAxis] setRngDefaultsLow:0 withHigh:300];
+    [pollTimeTextField setStringValue:[pollTimePU title]];
+    [mainSpecBox setFillColor:[NSColor colorWithRed:0.2 green:0.3 blue:0.5 alpha:0.1]];
+    [preSpecBox setFillColor:[NSColor colorWithRed:0.2 green:0.3 blue:0.5 alpha:0.1]];
+    [mainSpecOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
+    [mainSpecOffButton setTitle:@"Turn Off\nMain Spec\nHV"];
+    [postRegOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
+    [postRegOffButton setTitle:@"Post\nRegulation\nOff"];
+    [preSpecOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
+    [preSpecOffButton setTitle:@"Turn Off\nPre Spec\nHV"];
+    [self currentSetPoints];
+    double dv = [model readVesselVoltage] - [model readMainSpecVesselSetVoltage];
+    if([model pollTime])
+        [mainSpecStatusTextField setStringValue:[NSString stringWithFormat:@"%.2f V from setpoint", dv]];
+    else [mainSpecStatusTextField setStringValue:@"Unkown"];
+    [mainSpecStatusTextField setTextColor:[NSColor labelColor]];
     
 	[super awakeFromNib];
 }
@@ -58,7 +73,6 @@
                      selector : @selector(isConnectedChanged:)
                          name : ORHVcRIOModelIsConnectedChanged
 						object: model];
-	   
 
     [notifyCenter addObserver : self
                      selector : @selector(lockChanged:)
@@ -125,17 +139,50 @@
                          name : ORHVcRIOModelPostRegulationFileChanged
                        object : nil];
 
-    
     [notifyCenter addObserver : self
                      selector : @selector(pollTimeChanged:)
                          name : ORHVcRIOModelPollTimeChanged
                        object : nil];
     
+    [notifyCenter addObserver : self
+                     selector : @selector(mainSpecRamping:)
+                         name : ORHVcRIOModelMainSpecRamping
+                       object : nil];
     
+    [notifyCenter addObserver : self
+                     selector : @selector(mainSpecRampSuccess:)
+                         name : ORHVcRIOModelMainSpecRampSuccess
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(mainSpecRampFailure:)
+                         name : ORHVcRIOModelMainSpecRampFailure
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(estimatingScaleFactor:)
+                         name : ORHVcRIOModelEstimatingScaleFactor
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(postRegPrecisionChanged:)
+                         name : ORHVcRIOModelPostRegPrecisionChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(postRegConfigChanged:)
+                         name : ORHVcRIOModelPostRegConfigChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(postRegDefSFChanged:)
+                         name : ORHVcRIOModelPostRegDefSFChanged
+                       object : nil];
 }
 
 - (void) setModel:(id)aModel
 {
+    [aModel init];
 	[super setModel:aModel];
     [[self window] setTitle:[NSString stringWithFormat:@"HV-cRIO Control (Unit %u)",[model uniqueIdNumber]]];
 }
@@ -157,6 +204,9 @@
     [self showFormattedDatesChanged:nil];
     [self postRegulationFileChanged:nil];
     [self pollTimeChanged:nil];
+    [self postRegPrecisionChanged:nil];
+    [self postRegDefSFChanged:nil];
+    [self postRegConfigChanged:nil];
 }
 
 - (void) pollTimeChanged:(NSNotification*)aNote
@@ -166,9 +216,14 @@
         [progressWheel startAnimation:nil];
         [progressWheel setHidden:NO];
     }
-    else                {
+    else{
         [progressWheel stopAnimation:nil];
         [progressWheel setHidden:YES];
+    }
+    [pollTimeTextField setStringValue:[pollTimePU title]];
+    if(![model pollTime]){
+        [mainSpecStatusTextField setStringValue:@"Unknown"];
+        [mainSpecStatusTextField setTextColor:[NSColor blackColor]];
     }
 }
 
@@ -232,6 +287,7 @@
 - (void) setPointChanged:(NSNotification*)aNote
 {
 	[setPointTableView reloadData];
+    [self checkButtonStatus];
 }
 
 - (void) setPointFileChanged:(NSNotification*)aNote
@@ -246,11 +302,69 @@
     [expertPCControlOnlyField setStringValue:[model expertPCControlOnly] ? @"Ony Expert PC Can Set Values":@""];
     [zeusHasControlField setStringValue:     [model zeusHasControl]      ? @"ZEUS has control":@""];
     [orcaHasControlField setStringValue:     [model orcaHasControl]      ? @"ORCA has control":@""];
+
+    [retardingPotentialTextField setStringValue:[NSString stringWithFormat:@"%.2f",[model readK35Voltage]]];
+    [mainSpecVoltageTextField setStringValue:[NSString stringWithFormat:@"%f",-1*[model readMainSpecVesselVoltage]]];
+    [ieCommonTextField        setStringValue:[NSString stringWithFormat:@"%f",-1*[model readIeCommonVoltage]]];
+    [westConeTextField        setStringValue:[NSString stringWithFormat:@"%f",-1*[model readSteepConesWestVoltage]]];
+    [eastConeTextField        setStringValue:[NSString stringWithFormat:@"%f",-1*[model readSteepConesEastVoltage]]];
+    [preSpecVoltageTextField  setStringValue:[NSString stringWithFormat:@"%f",-1*[model readPreSpecVesselVoltage]]];
+    [southConeTextField       setStringValue:[NSString stringWithFormat:@"%f",-1*[model readPreSpecSouthConeVoltage]]];
+    [northConeTextField       setStringValue:[NSString stringWithFormat:@"%f",-1*[model readPreSpecNorthConeVoltage]]];
+    [wireElectrodeTextField   setStringValue:[NSString stringWithFormat:@"%f",-1*[model  readPreSpecWireElectrodeVoltage]]];
+    
+    if([model readPostRegSetVoltage] == 4.9){
+        [postRegTextField setStringValue:@"OFF"];
+        [postRegTextField setTextColor:[NSColor redColor]];
+    }
+    else{
+        [postRegTextField setStringValue:@"ON"];
+        [postRegTextField setTextColor:[NSColor greenColor]];
+    }
 }
 
 - (void) setPointsReadBackChanged:(NSNotification*)aNote
 {
 	[setPointTableView reloadData];
+}
+
+- (void) mainSpecRamping:(NSNotification*)aNote
+{
+    [mainSpecStatusTextField setStringValue:@"Ramping"];
+    [mainSpecStatusTextField setTextColor:[NSColor orangeColor]];
+}
+
+- (void) mainSpecRampSuccess:(NSNotification*)aNote
+{
+    [mainSpecStatusTextField setStringValue:@"At Set Point"];
+    [mainSpecStatusTextField setTextColor:[NSColor greenColor]];
+}
+
+- (void) mainSpecRampFailure:(NSNotification*)aNote
+{
+    [mainSpecStatusTextField setStringValue:@"Ramp Failed"];
+    [mainSpecStatusTextField setTextColor:[NSColor redColor]];
+}
+
+- (void) estimatingScaleFactor:(NSNotification*)aNote
+{
+    [mainSpecStatusTextField setStringValue:@"Estimating Scale Factor"];
+    [mainSpecStatusTextField setTextColor:[NSColor orangeColor]];
+}
+
+- (void) postRegPrecisionChanged:(NSNotification*)aNote
+{
+    [postRegPrecisionTextField setStringValue:[NSString stringWithFormat:@"%.2f", [model postRegPrecision]]];
+}
+
+- (void) postRegDefSFChanged:(NSNotification *)aNote
+{
+    [postRegDefSFTextField setStringValue:[NSString stringWithFormat:@"%.2f", [model postRegDefSF]]];
+}
+
+- (void) postRegConfigChanged:(NSNotification*)aNote
+{
+    [postRegConfigPU setIntValue:[model postRegConfig]];
 }
 
 - (void) checkGlobalSecurity
@@ -320,12 +434,242 @@
 - (void) setButtonStates
 {
     BOOL locked = [gSecurity isLocked:ORHVcRIOLock];
-    [readPostRegulationButton           setEnabled:    !locked];
-    [addPostRegulationPointButton       setEnabled:    !locked];
-    [removePostRegulationPointButton    setEnabled: !locked];
+    [readPostRegulationButton           setEnabled:!locked];
+    [addPostRegulationPointButton       setEnabled:!locked];
+    [removePostRegulationPointButton    setEnabled:!locked];
     [readSetPointFileButton             setEnabled:!locked];
     [writeAllSetPointsButton            setEnabled:!locked];
     [setPointTableView                  setEnabled:!locked];
+    [setMainSpecVoltageTextField        setEnabled:!locked];
+    [setIeCommonTextField               setEnabled:!locked];
+    [setEwSteepConeTextField            setEnabled:!locked];
+    [setPreSpecVoltageTextField         setEnabled:!locked];
+    [setSouthConeTextField              setEnabled:!locked];
+    [setNorthConeTextField              setEnabled:!locked];
+    [setWireElectrodeTextField          setEnabled:!locked];
+    [setMainSpecVoltageButton           setEnabled:!locked];
+    [setIECommonButton                  setEnabled:!locked];
+    [setEWSteepConesButton              setEnabled:!locked];
+    [setPreSpecVoltageButton            setEnabled:!locked];
+    [setSouthConeButton                 setEnabled:!locked];
+    [setNorthConeButton                 setEnabled:!locked];
+    [setWireElectrodeButton             setEnabled:!locked];
+    [enablePostRegButton                setEnabled:!locked];
+    [mainSpecOffButton                  setEnabled:!locked];
+    [postRegOffButton                   setEnabled:!locked];
+    [preSpecOffButton                   setEnabled:!locked];
+    [currentSetPointButton              setEnabled:!locked];
+}
+
+- (double) checkTFVoltage:(id)sender withMin:(double)minV andMax:(double)maxV
+{
+    NSString* sv = [[sender stringValue] stringByReplacingOccurrencesOfString:@"," withString:@""];
+    double v = [self checkVoltage:[sv doubleValue] withMin:minV andMax:maxV];
+    [sender setStringValue:[NSString stringWithFormat:@"%f", v]];
+    return v;
+}
+
+- (double) checkVoltage:(double)voltage withMin:(double)minV andMax:(double)maxV
+{
+    return MAX(MIN(ABS(voltage), maxV), minV);
+}
+
+- (void) changeButton:(NSButton*)button withColor:(NSColor*)color
+{
+    NSDictionary* attr = [NSDictionary dictionaryWithObjectsAndKeys:color, NSForegroundColorAttributeName, nil];
+    NSAttributedString* str = [[NSAttributedString alloc] initWithString:[button title] attributes:attr];
+    [button setAttributedTitle:str];
+    [str release];
+}
+
+- (BOOL) checkButtonStatus:(NSButton*)button fromTextField:(NSTextField*)text
+                withString:(NSString*)str withMin:(double)minv andMax:(double)maxv
+{
+    double setPoint = [[model setPointAtIndex:[model spIndex:str]] doubleValue];
+    double value = [self checkVoltage:[text doubleValue] withMin:minv andMax:maxv];
+    if(value != [[text stringValue] doubleValue]) [text setStringValue:[NSString stringWithFormat:@"%f",value]];
+    if(setPoint != value){
+        [self changeButton:button withColor:[NSColor orangeColor]];
+        return false;
+    }
+    else{
+        [self changeButton:button withColor:[NSColor labelColor]];
+        return true;
+    }
+}
+
+- (BOOL) checkButtonStatus:(NSButton*)button fromTextField:(NSTextField*)text withString:(NSString*)str
+{
+    double setPoint = [[model setPointAtIndex:[model spIndex:str]] doubleValue];
+    if([str isEqualToString:@"mainSpecSupplyOffset"]) setPoint -= [model getSupplyOffset:setPoint forConfig:0];
+    double value = [text doubleValue];
+    if(setPoint != value){
+        [self changeButton:button withColor:[NSColor orangeColor]];
+        return false;
+    }
+    else{
+        [self changeButton:button withColor:[NSColor labelColor]];
+        return true;
+    }
+}
+
+- (void) checkButtonStatus
+{
+    [self checkButtonStatus:setMainSpecVoltageButton  fromTextField:setMainSpecVoltageTextField withString:@"mainSpecSupplyVoltage"];
+    [self checkButtonStatus:setIECommonButton         fromTextField:setIeCommonTextField        withString:@"ieCommonVoltage"];
+    [self checkButtonStatus:setPreSpecVoltageButton   fromTextField:setPreSpecVoltageTextField  withString:@"preSpecVoltage"];
+    [self checkButtonStatus:setSouthConeButton        fromTextField:setSouthConeTextField       withString:@"preSpecSouthConeVoltage"];
+    [self checkButtonStatus:setNorthConeButton        fromTextField:setNorthConeTextField       withString:@"preSpecNorthConeVoltage"];
+    [self checkButtonStatus:setWireElectrodeButton    fromTextField:setWireElectrodeTextField   withString:@"preSpecWireElectrodeVoltage"];
+    if(![self checkButtonStatus:setEWSteepConesButton fromTextField:setEwSteepConeTextField     withString:@"innerElectrodeWest"] ||
+       ![self checkButtonStatus:setEWSteepConesButton fromTextField:setEwSteepConeTextField     withString:@"innerElectrodeEast"])
+        [self changeButton:setEWSteepConesButton withColor:[NSColor orangeColor]];
+}
+
+- (IBAction) setMainSpecVoltageTextAction:(id)sender
+{
+    [self checkButtonStatus:setMainSpecVoltageButton fromTextField:sender
+                 withString:@"mainSpecSupplyVoltage" withMin:0.0 andMax:kHVcRIOMainSpecMaxVoltage];
+}
+
+- (IBAction) setIeCommonTextAction:(id)sender
+{
+    [self checkButtonStatus:setIECommonButton fromTextField:sender
+                 withString:@"ieCommonVoltage" withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+}
+
+- (IBAction) setEwSteepConeTextAction:(id)sender
+{
+    if(![self checkButtonStatus:setEWSteepConesButton fromTextField:sender
+                     withString:@"innerElectrodeWest" withMin:0.0 andMax:kHVcRIOSteepConeMaxVoltage] ||
+       ![self checkButtonStatus:setEWSteepConesButton fromTextField:sender
+                      withString:@"innerElectrodeEast" withMin:0.0 andMax:kHVcRIOSteepConeMaxVoltage])
+        [self changeButton:setEWSteepConesButton withColor:[NSColor orangeColor]];
+}
+
+- (IBAction) setPreSpecVoltageTextAction:(id)sender
+{
+    [self checkButtonStatus:setPreSpecVoltageButton fromTextField:sender
+                 withString:@"preSpecVoltage" withMin:0.0 andMax:kHVcRIOPreSpecMaxVoltage];
+}
+
+- (IBAction) setSouthConeTextAction:(id)sender
+{
+    [self checkButtonStatus:setSouthConeButton fromTextField:sender
+                 withString:@"preSpecSouthConeVoltage" withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+}
+
+- (IBAction) setNorthConeTextAction:(id)sender
+{
+    [self checkButtonStatus:setNorthConeButton fromTextField:sender
+                 withString:@"preSpecNorthConeVoltage" withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+}
+
+- (IBAction) setWireElectrodeTextAction:(id)sender
+{
+    [self checkButtonStatus:setWireElectrodeButton fromTextField:sender
+                 withString:@"preSpecWireElectrodeVoltage" withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+}
+
+- (IBAction) setMainSpecVoltageAction:(id)sender
+{
+    [[setMainSpecVoltageTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setMainSpecVoltageTextField withMin:0.0 andMax:kHVcRIOMainSpecMaxVoltage];
+    if([enablePostRegButton state]) [model setVesselVoltageWithPostReg:voltage
+                                                             precision:[model postRegPrecision]
+                                                                config:[model postRegConfig]];
+    else [model setVesselVoltageWithoutPostReg:voltage];
+}
+
+- (IBAction) setIECommonAction:(id)sender
+{
+    [[setIeCommonTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setIeCommonTextField withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+    [model setIeCommonVoltage:voltage];
+}
+
+- (IBAction) setEWSteepConesAction:(id)sender
+{
+    [[setEwSteepConeTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setEwSteepConeTextField withMin:0.0 andMax:kHVcRIOSteepConeMaxVoltage];
+    [model setSteepConesVoltage:voltage];
+}
+
+- (IBAction) setPreSpecVoltageAction:(id)sender
+{
+    [[setPreSpecVoltageTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setPreSpecVoltageTextField withMin:0.0 andMax:kHVcRIOPreSpecMaxVoltage];
+    [model setPreSpecVesselVoltage:voltage];
+}
+
+- (IBAction) setSouthConeAction:(id)sender
+{
+    [[setSouthConeTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setSouthConeTextField withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+    [model setPreSpecSouthConeVoltage:voltage];
+}
+
+- (IBAction) setNorthConeAction:(id)sender
+{
+    [[setNorthConeTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setNorthConeTextField withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+    [model setPreSpecNorthConeVoltage:voltage];
+}
+
+- (IBAction) setWireElectrodeAction:(id)sender
+{
+    [[setWireElectrodeTextField window] makeFirstResponder:nil];
+    double voltage = [self checkTFVoltage:setWireElectrodeTextField withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+    [model setPreSpecWireElectrodeVoltage:voltage];
+}
+
+- (IBAction) mainSpecOffAction:(id)sender
+{
+    [model turnOffHV];
+}
+
+- (IBAction) postRegOffAction:(id)sender
+{
+    [model turnOffPostReg];
+    [enablePostRegButton setState:NO];
+}
+
+- (IBAction) preSpecOffAction:(id)sender
+{
+    [model turnOffPreSpec];
+}
+
+- (IBAction) postRegConfigAction:(id)sender
+{
+    NSLog([NSString stringWithFormat:@"%i\n", (int) [sender tag]]);
+    [model setPostRegConfig:(int)[sender tag]];
+}
+
+- (IBAction) postRegPrecisionAction:(id)sender
+{
+    [model setPostRegPrecision:[[sender stringValue] doubleValue]];
+}
+
+- (IBAction) postRegDefSFAction:(id)sender
+{
+    [model setPostRegDefSF:[[sender stringValue] doubleValue]];
+}
+
+- (void) currentSetPoints
+{
+    [setMainSpecVoltageTextField setStringValue:[model setPointAtIndex:[model spIndex:@"mainSpecVoltage"]]];
+    [setIeCommonTextField        setStringValue:[model setPointAtIndex:[model spIndex:@"ieCommonVoltage"]]];
+    [setEwSteepConeTextField     setStringValue:[model setPointAtIndex:[model spIndex:@"innerElectrodeWest"]]];
+    [setPreSpecVoltageTextField  setStringValue:[model setPointAtIndex:[model spIndex:@"preSpecVoltage"]]];
+    [setSouthConeTextField       setStringValue:[model setPointAtIndex:[model spIndex:@"preSpecSouthConeVoltage"]]];
+    [setNorthConeTextField       setStringValue:[model setPointAtIndex:[model spIndex:@"preSpecNorthConeVoltage"]]];
+    [setWireElectrodeTextField   setStringValue:[model setPointAtIndex:[model spIndex:@"preSpecWireElectrodeVoltage"]]];
+    [self checkButtonStatus];
+}
+
+- (IBAction) currentSetPointAction:(id)sender
+{
+    [self currentSetPoints];
 }
 
 #pragma mark ***Table Data Source

@@ -27,6 +27,18 @@
 #define kPostRegulationScaleFactor     @"kPostRegulationScaleFactor"
 #define kPowerSupplyOffset             @"kPowerSupplyOffset"
 #define kHVcRIORecordSize 9
+#define kHVcRIOK35ScaleFactor     -1972.45
+#define kHVcRIOMainSpecMaxVoltage 33000.0
+#define kHVcRIOMainSpecRampSpeed    100.0
+#define kHVcRIOIECommonMaxVoltage   500.0
+#define kHVcRIOSteepConeMaxVoltage  300.0
+#define kHVcRIOPostRegOffVoltage      4.9
+#define kHVcRIOScaleFactorMin      6980.0
+#define kHVcRIOScaleFactorMax      7020.0
+#define kHVcRIOPreSpecMaxVoltage  35000.0
+#define kHVcRIOPostRegPrecisionMin    0.25
+#define kHVcRIOPostRegPrecisionMax    1.0
+
 @interface ORHVcRIOModel : OrcaObject <ORAdcProcessing>
 {
     @private
@@ -45,6 +57,8 @@
         NSMutableArray*     postRegulationArray;
         NSString*           postRegulationFile;
         NSMutableDictionary* shipValueDictionary;
+        NSDictionary*        spIndexDictionary;
+        NSDictionary*        mvIndexDictionary;
 
         BOOL                expertPCControlOnly;
         BOOL                zeusHasControl;
@@ -53,10 +67,17 @@
         NSMutableString*    stringBuffer;
         BOOL                showFormattedDates;
         int                 pollTime;
-        uint32_t       dataId;
+        uint32_t            dataId;
+        BOOL                mainSpecRamping;
+        BOOL                mainSpecPostRegRamping;
+        BOOL                scaleFactorEstimating;
+        double              postRegPrecision;
+        double              postRegDefSF;
+        int                 postRegConfig;
 }
 
 #pragma mark ***Initialization
+//- (id) init;
 - (void) dealloc;
 - (NSString*) commonScriptMethods;
 
@@ -70,7 +91,6 @@
 - (id) setPointAtIndex:(int)i;
 - (id) setPointReadBackAtIndex:(int)i;
 - (id) measuredValueAtIndex:(int)i;
-- (void) setMeasuredValue: (int)aIndex withValue: (double)value;
 - (NetSocket*) socket;
 - (void) setSocket:(NetSocket*)aSocket;
 - (NSString*) ipAddress;
@@ -135,6 +155,58 @@
 - (void)   setPowerSupplyOffset:(int)anIndex withValue:(double)aValue;
 - (void)   setVesselVoltageSetPoint:(int)anIndex withValue:(double)aValue;
 
+- (int) spIndex:(NSString*)key;
+- (int) mvIndex:(NSString*)key;
+- (double) readK35Voltage;
+- (double) readMainSpecVesselVoltage;
+- (double) readMainSpecVesselSetVoltage;
+- (double) readMainSpecVesselCurrentLimit;
+- (double) readMainSpecVesselCurrent;
+- (double) readMainSpecElectrodeVoltage;
+- (double) readMainSpecElectrodeSetVoltage;
+- (double) readIeCommonVoltage;
+- (double) readPostRegSetVoltage;
+- (double) readSteepConesWestVoltage;
+- (double) readSteepConesEastVoltage;
+- (double) readVesselVoltage;
+- (double) readPreSpecVesselVoltage;
+- (double) readPreSpecIeVoltage:(int)anIndex;
+- (double) readPreSpecSouthConeVoltage;
+- (double) readPreSpecNorthConeVoltage;
+- (double) readPreSpecWireElectrodeVoltage;
+- (double) postRegPrecision;
+- (double) postRegDefSF;
+- (int) postRegConfig;
+
+- (void) updateVesselVoltage:(NSMutableDictionary*)dict;
+- (void) setMainSpecSupplyVoltage:(double)value;
+- (void) setIeCommonVoltage:(double)value;
+- (void) setSteepConesVoltage:(double)value;
+- (void) setPostRegVoltage:(double)value;
+- (void) setPreSpecVesselVoltage:(double)value;
+- (void) setPreSpecIeVoltage:(double)value withIndex:(int)anIndex;
+- (void) setPreSpecSouthConeVoltage:(double)value;
+- (void) setPreSpecNorthConeVoltage:(double)value;
+- (void) setPreSpecWireElectrodeVoltage:(double)value;
+- (void) setPostRegPrecision:(double)value;
+- (void) setPostRegDefSF:(double)value;
+- (void) setPostRegConfig:(int)value;
+
+- (void) turnOffPostReg;
+- (void) turnOffHV;
+- (void) turnOffPreSpec;
+
+- (int) getSupplyOffset:(double)voltage forConfig:(int)config;
+- (double) scaleFactorCheck:(double)value;
+- (void) updateScaleFactor:(NSMutableDictionary*)dict;
+- (double) getScaleFactor:(double)voltage estimateTime:(double)time withDefault:(double)defSF;
+- (double) getPostRegulationScaleFactor:(double)voltage;
+- (double) estimateScaleFactorPostReg:(double)voltage withDefault:(double)defSF supplyOffset:(int)offset;
+- (void) setPostRegulation:(double)voltage scaleFactor:(double)sf;
+- (void) setVesselVoltageWithPostReg:(double)voltage scaleFactor:(double)sf supplyOffset:(int)offset;
+- (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config;
+- (void) setVesselVoltageWithoutPostReg:(double)voltage;
+
 - (uint32_t) dataId;
 - (void) setDataId: (uint32_t) DataId;
 - (void) setDataIds:(id)assigner;
@@ -175,6 +247,13 @@ extern NSString* ORHVcRIOModelPostRegulationPointAdded;
 extern NSString* ORHVcRIOModelPostRegulationPointRemoved;
 extern NSString* ORHVcRIOModelUpdatePostRegulationTable;
 extern NSString* ORHVcRIOModelPollTimeChanged;
+extern NSString* ORHVcRIOModelMainSpecRamping;
+extern NSString* ORHVcRIOModelMainSpecRampSuccess;
+extern NSString* ORHVcRIOModelMainSpecRampFailure;
+extern NSString* ORHVcRIOModelEstimatingScaleFactor;
+extern NSString* ORHVcRIOModelPostRegPrecisionChanged;
+extern NSString* ORHVcRIOModelPostRegConfigChanged;
+extern NSString* ORHVcRIOModelPostRegDefSFChanged;
 
 @interface PostRegulationPoint : NSObject
 {

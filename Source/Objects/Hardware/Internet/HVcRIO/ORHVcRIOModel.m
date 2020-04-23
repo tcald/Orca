@@ -39,7 +39,13 @@ NSString* ORHVcRIOModelPostRegulationPointAdded     = @"ORHVcRIOModelPostRegulat
 NSString* ORHVcRIOModelPostRegulationPointRemoved   = @"ORHVcRIOModelPostRegulationPointRemoved";
 NSString* ORHVcRIOModelUpdatePostRegulationTable    = @"ORHVcRIOModelUpdatePostRegulationTable";
 NSString* ORHVcRIOModelPollTimeChanged              = @"ORHVcRIOModelPollTimeChanged";
-
+NSString* ORHVcRIOModelMainSpecRamping              = @"ORHVcRIOModelMainSpecRamping";
+NSString* ORHVcRIOModelMainSpecRampSuccess          = @"ORHVcRIOModelMainSpecRampSuccess";
+NSString* ORHVcRIOModelMainSpecRampFailure          = @"ORHVcRIOModelMainSpecRampFailure";
+NSString* ORHVcRIOModelEstimatingScaleFactor        = @"ORHVcRIOModelEstimatingScaleFactor";
+NSString* ORHVcRIOModelPostRegPrecisionChanged      = @"ORHVcRIOModelPostRegPrecisionChanged";
+NSString* ORHVcRIOModelPostRegConfigChanged         = @"ORHVcRIOModelPostRegConfigChanged";
+NSString* ORHVcRIOModelPostRegDefSFChanged          = @"ORHVcRIOModelPostRegDefSFChanged";
 NSString* ORHVcRIOLock						        = @"ORHVcRIOLock";
 
 
@@ -951,7 +957,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     @"305", @"436-REU-0-0201-0030-meas_flag",
     @"306", @"436-REU-0-0301-0001-U_act",
     @"307", @"436-REU-0-0301-0020-trigger_time",
-    @"308", @"436-REU-0-0301-0030-meas_flag",
+    @"308", @"436-REU-0-0301-0030-meas_flag"
 };
 
 @interface ORHVcRIOModel (private)
@@ -964,6 +970,17 @@ static NSString* itemsToShip[kNumToShip*2] = {
 #define kHVcRIOPort 12340
 
 @implementation ORHVcRIOModel
+
+/*- (id) init
+{
+    [super init];
+    [[self undoManager] disableUndoRegistration];
+    [self setPostRegPrecision:kHVcRIOPostRegPrecisionMin];
+    [self setPostRegDefSF:(kHVcRIOScaleFactorMin+kHVcRIOScaleFactorMax)/2];
+    [self setPostRegConfig:0];
+    [[self undoManager] enableUndoRegistration];
+    return self;
+}*/
 
 - (void) dealloc
 {
@@ -982,6 +999,8 @@ static NSString* itemsToShip[kNumToShip*2] = {
         [socket release];
     }
     [shipValueDictionary release];
+    [spIndexDictionary release];
+    [mvIndexDictionary release];
     [ipAddress release];
 	
 	[super dealloc];
@@ -1045,6 +1064,18 @@ static NSString* itemsToShip[kNumToShip*2] = {
         [setPoints addObject:dict];
         if([setPointList[index] isEqualToString:@""])break;
     }
+    if(spIndexDictionary) [spIndexDictionary release];
+    spIndexDictionary = [[NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithInt:29],  @"innerElectrodeWest",
+                          [NSNumber numberWithInt:101], @"innerElectrodeEast",
+                          [NSNumber numberWithInt:152], @"mainSpecSupplyVoltage",
+                          [NSNumber numberWithInt:155], @"mainSpecElectrodeVoltage",
+                          [NSNumber numberWithInt:170], @"ieCommonVoltage",
+                          [NSNumber numberWithInt:173], @"preSpecVoltage",
+                          [NSNumber numberWithInt:176], @"preSpecSouthConeVoltage",
+                          [NSNumber numberWithInt:179], @"preSpecWireElectrodeVoltage",
+                          [NSNumber numberWithInt:182], @"preSpecNorthConeVoltage",
+                          [NSNumber numberWithInt:196], @"postRegulationVoltage", nil] retain];
 }
 
 
@@ -1065,6 +1096,25 @@ static NSString* itemsToShip[kNumToShip*2] = {
         [measuredValues addObject:dict];
         if([measuredValueList[index] isEqualToString:@""])break;
     }
+    if(mvIndexDictionary) [mvIndexDictionary release];
+    mvIndexDictionary = [[NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithInt:38],  @"mainSpecVesselSetVoltage",
+                          [NSNumber numberWithInt:39],  @"mainSpecVesselVoltage",
+                          [NSNumber numberWithInt:40],  @"mainSpecVesselCurrentLimit",
+                          [NSNumber numberWithInt:41],  @"mainSpecVesselCurrent",
+                          [NSNumber numberWithInt:46],  @"mainSpecElectrodeSetVoltage",
+                          [NSNumber numberWithInt:47],  @"mainSpecElectrodeVoltage",
+                          [NSNumber numberWithInt:86],  @"ieCommonSetVoltage",
+                          [NSNumber numberWithInt:87],  @"ieCommonVoltage",
+                          [NSNumber numberWithInt:95],  @"preSpecVesselVoltage",
+                          [NSNumber numberWithInt:103], @"preSpecIeBaseIndex",
+                          [NSNumber numberWithInt:103], @"preSpecSouthConeVoltage",
+                          [NSNumber numberWithInt:111], @"preSpecIeVoltage",
+                          [NSNumber numberWithInt:119], @"preSpecNorthConeVoltage",
+                          [NSNumber numberWithInt:128], @"steepConeWestVoltage",
+                          [NSNumber numberWithInt:228], @"steepConeEastVoltage",
+                          [NSNumber numberWithInt:303], @"k35Voltage",
+                          [NSNumber numberWithInt:651], @"postRegSetVoltage", nil] retain];
 }
 
 - (NSString*) measuredValueName:(NSUInteger)anIndex
@@ -1470,6 +1520,54 @@ static NSString* itemsToShip[kNumToShip*2] = {
                               @"setPointReadBackAtIndex:(int)",
                               @"measuredValueAtIndex:(int)",
                               @"pushReadBacksToSetPoints",
+                              @"vesselVoltageSetPoint:(int)",
+                              @"postRegulationScaleFactor:(int)",
+                              @"powerSupplyOffset:(int)",
+                              @"setPostRegulationScaleFactor:(int) withValue:(double)",
+                              @"setPowerSupplyOffset:(int) withValue:(double)",
+                              @"setVesselVoltageSetPoint:(int) withValue:(double)",
+                              @"spIndex:(NSString*)",
+                              @"mvIndex:(NSString*)",
+                              @"readK35Voltage",
+                              @"readMainSpecVesselVoltage",
+                              @"readMainSpecVesselSetVoltage",
+                              @"readMainSpecVesselCurrentLimit",
+                              @"readMainSpecVesselCurrent",
+                              @"readMainSpecElectrodeVoltage",
+                              @"readMainSpecElectrodeSetVoltage",
+                              @"readIeCommonVoltage",
+                              @"readPostRegSetVoltage",
+                              @"readSteepConesWestVoltage",
+                              @"readSteepConesEastVoltage",
+                              @"readVesselVoltage",
+                              @"readPreSpecVesselVoltage",
+                              @"readPreSpecIeVoltage:(int)",
+                              @"readPreSpecSouthConeVoltage",
+                              @"readPreSpecNorthConeVoltage",
+                              @"readPreSpecWireElectrodeVoltage",
+                              @"updateVesselVoltage:(NSMutableDictionary*)",
+                              @"setMainSpecSupplyVoltage:(double)",
+                              @"setIeCommonVoltage:(double)",
+                              @"setSteepConesVoltage:(double)",
+                              @"setPostRegVoltage:(double)",
+                              @"setPreSpecVesselVoltage:(double)",
+                              @"setPreSpecIeVoltage:(double) withIndex:(int)",
+                              @"setPreSpecSouthConeVoltage:(double)",
+                              @"setPreSpecNorthConeVoltage:(double)",
+                              @"setPreSpecWireElectrodeVoltage:(double)",
+                              @"turnOffPostReg",
+                              @"turnOffHV",
+                              @"turnOffPreSpec",
+                              @"getSupplyOffset:(double) forConfig:(int)",
+                              @"scaleFactorCheck:(double)",
+                              @"updateScaleFactor:(NSMutableDictionary*)",
+                              @"getScaleFactor:(double) estimateTime:(double) withDefault:(double)",
+                              @"getPostRegulationScaleFactor:(double)",
+                              @"estimateScaleFactorPostReg:(double) withDefault:(double) andSupplyOffset:(int)",
+                              @"setPostRegulation:(double) scaleFactor:(double)",
+                              @"setVesselVoltageWithPostReg:(double) scaleFactor:(double) andSupplyOffset:(int)",
+                              @"setVesselVoltageWithPostReg:(double) precision:(double) andConfig:(int)",
+                              @"setVesselVoltageWithoutPostReg:(double)",
                               nil];
     
     return [selectorArray componentsJoinedByString:@"\n"];
@@ -1540,11 +1638,13 @@ static NSString* itemsToShip[kNumToShip*2] = {
     [self setShowFormattedDates:[decoder decodeBoolForKey:   @"showFormattedDates"]];
     [self setPostRegulationFile:[decoder decodeObjectForKey: @"postRegulationFile"]];
     [self setPostRegulationArray:[decoder decodeObjectForKey:@"postRegulationArray"]];
-    [self setPollTime:          [decoder decodeIntForKey:@"pollTime"]];
-    if(!setPoints)[self createSetPointArray];
+    [self setPollTime:          [decoder decodeIntForKey:    @"pollTime"]];
+    [self setPostRegPrecision:  [decoder decodeDoubleForKey: @"postRegPrecision"]];
+    [self setPostRegDefSF:      [decoder decodeDoubleForKey: @"postRegDefSF"]];
+    [self setPostRegConfig:     [decoder decodeIntForKey:    @"postRegConfig"]];
+    if(!setPoints) [self createSetPointArray];
     
     [self createMeasuredValueArray];
-    
     if(wasConnected)[self connect];
     
 	[[self undoManager] enableUndoRegistration];
@@ -1561,9 +1661,12 @@ static NSString* itemsToShip[kNumToShip*2] = {
     [encoder encodeObject:ipAddress           forKey:@"ORHVcRIOModelIpAddress"];
     [encoder encodeObject:setPoints           forKey:@"setPoints"];
     [encoder encodeBool:showFormattedDates    forKey:@"showFormattedDates"];
-    [encoder encodeObject:postRegulationFile  forKey: @"postRegulationFile"];
-    [encoder encodeObject:postRegulationArray forKey: @"postRegulationArray"];
-    [encoder encodeInteger:pollTime               forKey: @"pollTime"];
+    [encoder encodeObject:postRegulationFile  forKey:@"postRegulationFile"];
+    [encoder encodeObject:postRegulationArray forKey:@"postRegulationArray"];
+    [encoder encodeInteger:pollTime           forKey:@"pollTime"];
+    [encoder encodeDouble:postRegPrecision    forKey:@"postRegPrecision"];
+    [encoder encodeDouble:postRegDefSF        forKey:@"postRegDefSF"];
+    [encoder encodeInteger:postRegConfig      forKey:@"postRegConfig"];
 }
 
 #pragma mark *** Commands
@@ -1783,6 +1886,513 @@ static NSString* itemsToShip[kNumToShip*2] = {
     [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelUpdatePostRegulationTable object:self];
 }
 
+- (int) spIndex:(NSString*)key
+{
+    return [[spIndexDictionary valueForKey:key] intValue];
+}
+
+- (int) mvIndex:(NSString*)key
+{
+    return [[mvIndexDictionary valueForKey:key] intValue];
+}
+
+- (double) readK35Voltage
+{
+    return ([[self measuredValueAtIndex:[self mvIndex:@"k35Voltage"]] doubleValue] * kHVcRIOK35ScaleFactor);
+}
+
+- (double) readMainSpecVesselVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"mainSpecVesselVoltage"]] doubleValue];
+}
+
+- (double) readMainSpecVesselSetVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"mainSpecVesselSetVoltage"]] doubleValue];
+}
+
+- (double) readMainSpecVesselCurrentLimit
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"mainSpecVesselCurrentLimit"]] doubleValue];
+}
+
+- (double) readMainSpecVesselCurrent
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"mainSpecVesselCurrent"]] doubleValue];
+}
+
+- (double) readMainSpecElectrodeVoltage
+{
+    return (-1 * [[self measuredValueAtIndex:[self mvIndex:@"mainSpecElectrodeVoltage"]] doubleValue]);
+}
+
+- (double) readMainSpecElectrodeSetVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"mainSpecElectrodeSetVoltage"]] doubleValue];
+}
+
+- (double) readIeCommonVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"ieCommonVoltage"]] doubleValue];
+}
+
+- (double) readPostRegSetVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"postRegSetVoltage"]] doubleValue];
+}
+
+- (double) readSteepConesWestVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"steepConeWestVoltage"]] doubleValue];
+}
+
+- (double) readSteepConesEastVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"steepConeEastVoltage"]] doubleValue];
+}
+
+- (double) readVesselVoltage
+{
+    return ([self readK35Voltage] - [self readIeCommonVoltage]);
+}
+
+- (double) readPreSpecVesselVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"preSpecVesselVoltage"]] doubleValue];
+}
+
+- (double) readPreSpecIeVoltage:(int)anIndex
+{
+    if(anIndex < 1 || anIndex > 4){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: invalid pre-spec voltage index %i\n",anIndex]);
+        return 0.0;
+    }
+    return [[self measuredValueAtIndex:([self mvIndex:@"preSpecIeBaseIndex"]+8*(anIndex-1))] doubleValue];
+}
+
+- (double) readPreSpecSouthConeVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"preSpecSouthConeVoltage"]] doubleValue];
+}
+
+- (double) readPreSpecNorthConeVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"preSpecNorthConeVoltage"]] doubleValue];
+}
+
+- (double) readPreSpecWireElectrodeVoltage
+{
+    return [[self measuredValueAtIndex:[self mvIndex:@"preSpecIeVoltage"]] doubleValue];
+}
+
+- (double) postRegPrecision
+{
+    return postRegPrecision;
+}
+
+- (double) postRegDefSF
+{
+    return postRegDefSF;
+}
+
+- (int) postRegConfig
+{
+    return postRegConfig;
+}
+
+- (void) updateVesselVoltage:(NSDictionary*)dict
+{
+    if([[dict objectForKey:@"stepCount"] intValue] >= 0)
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(updateVesselVoltage:) object:dict];
+    double setPoint = [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue];
+    double voltage =  [self readMainSpecVesselVoltage];
+    if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue]){
+        NSLog(@"ORHVcRIO: set point changed during ramping\n");
+        int nsteps = ABS(voltage-setPoint) / kHVcRIOMainSpecRampSpeed / pollTime;
+        [dict setValue:[NSNumber numberWithDouble:voltage] forKey:@"startVoltage"];
+        [dict setValue:[NSNumber numberWithDouble:setPoint] forKey:@"setPoint"];
+        [dict setValue:[NSNumber numberWithInt:nsteps] forKey:@"nsteps"];
+        [dict setValue:[NSNumber numberWithInt:-1] forKey:@"stepCount"];
+    }
+    if(ABS(voltage-setPoint) < 30){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: main spectrometer vessel voltage successfully ramped from %.2f V to %.2f V\n",
+               [[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
+        [dict release];
+        mainSpecRamping = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRampSuccess object:self];
+        return;
+    }
+    [dict setValue:[NSNumber numberWithInt:([[dict objectForKey:@"stepCount"] intValue]+1)] forKey:@"stepCount"];
+    if([[dict objectForKey:@"stepCount"] intValue] < 2*([[dict objectForKey:@"nsteps"] intValue]+3)){
+        if([[dict objectForKey:@"stepCount"] intValue] == [[dict objectForKey:@"nsteps"] intValue]+3){
+            NSLog(@"ORHVcRIO: timeout setting main spectrometer vessel voltage, attempting to re-send set point\n");
+            [self setSetPoint:[self spIndex:@"mainSpecSupplyVoltage"] withValue:setPoint];
+            [self writeSetpoints];
+        }
+    }
+    else{
+        NSLog(@"ORHVcRIO: timeout setting main spectrometer vessel voltage after re-sending set point\n");
+        [dict release];
+        mainSpecRamping = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRampFailure object:self];
+        return;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRamping object:self];
+    [self performSelector:@selector(updateVesselVoltage:) withObject:dict afterDelay:pollTime];
+}
+
+- (void) setMainSpecSupplyVoltage:(double)value
+{
+    NSNumber* voltage = [NSNumber numberWithDouble:MIN(ABS(value), kHVcRIOMainSpecMaxVoltage)];
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting main spectrometer supply voltage to %.2f V\n", [voltage doubleValue]]);
+    [self setSetPoint:[self spIndex:@"mainSpecSupplyVoltage"] withValue:[voltage doubleValue]];
+    [self writeSetpoints];
+    if(pollTime == 0){
+        NSLog(@"ORHVcRIO: warning - poll time set to never, not checking main spectrometer voltage readback\n");
+        return;
+    }
+    NSNumber* currentVoltage = [NSNumber numberWithDouble:[self readMainSpecVesselVoltage]];
+    if(([currentVoltage doubleValue] - value) < 30) return;
+    NSNumber* nsteps = [NSNumber numberWithInt:ceil(ABS([voltage doubleValue] - [currentVoltage doubleValue])
+                                                       / kHVcRIOMainSpecRampSpeed / pollTime)];
+    NSMutableDictionary* dict = [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  currentVoltage,              @"startVoltage",
+                                  voltage,                     @"setPoint",
+                                  nsteps,                      @"nsteps",
+                                  [NSNumber numberWithInt:-1], @"stepCount", nil] retain];
+    mainSpecRamping = YES;
+    [self updateVesselVoltage:dict];
+}
+
+- (void) setIeCommonVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOIECommonMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting IE common voltage to %.2f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"ieCommonVoltage"] withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setSteepConesVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOSteepConeMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting east and west steep cone voltages to %.2f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"innerElectrodeWest"] withValue:voltage];
+    [self setSetPoint:[self spIndex:@"innerElectrodeEast"] withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setPostRegVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOPostRegOffVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting post-regulation voltage to %.4f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"postRegulationVoltage"] withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setPreSpecVesselVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOPreSpecMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting pre-spec vessel voltage to %.2f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"preSpecVoltage"] withValue:voltage];
+}
+
+- (void) setPreSpecIeVoltage:(double)value withIndex:(int)anIndex
+{
+    double voltage = MIN(ABS(value), kHVcRIOIECommonMaxVoltage);
+    if(anIndex < 1 || anIndex > 4){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: invalid pre-spec voltage index %i V\n",anIndex]);
+        return;
+    }
+    [self setSetPoint:([self spIndex:@"preSpecVoltage"]+3*anIndex) withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setPreSpecSouthConeVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOIECommonMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting pre-spec south cone voltage to %.2f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"preSpecSouthConeVoltage"] withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setPreSpecNorthConeVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOIECommonMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting pre-spec north cone voltage to %.2f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"preSpecNorthConeVoltage"] withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setPreSpecWireElectrodeVoltage:(double)value
+{
+    double voltage = MIN(ABS(value), kHVcRIOIECommonMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting pre-spec wire electrode voltage to %.2f V\n",voltage]);
+    [self setSetPoint:[self spIndex:@"preSpecWireElectrodeVoltage"] withValue:voltage];
+    [self writeSetpoints];
+}
+
+- (void) setPostRegPrecision:(double)value
+{
+    postRegPrecision = MAX(kHVcRIOPostRegPrecisionMin, MIN(kHVcRIOPostRegPrecisionMax, value));
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting post-reg precision to %.2f V\n", postRegPrecision]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelPostRegPrecisionChanged object:self];
+}
+
+- (void) setPostRegDefSF:(double)value
+{
+    postRegDefSF = MAX(kHVcRIOScaleFactorMin, MIN(kHVcRIOScaleFactorMax, value));
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting default scale factor to %.2f\n", postRegDefSF]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelPostRegDefSFChanged object:self];
+}
+
+- (void) setPostRegConfig:(int)value
+{
+    postRegConfig = MAX(0, MIN(1, value));
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting post-reg configuration to %i\n", postRegConfig]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelPostRegConfigChanged object:self];
+}
+
+- (void) turnOffPostReg
+{
+    NSLog(@"ORHVcRIO: turning off post-regulation\n");
+    [self setPostRegVoltage:kHVcRIOPostRegOffVoltage];
+}
+
+- (void) turnOffHV
+{
+    NSLog(@"ORHVcROI: turning off HV\n");
+    [self turnOffPostReg];
+    [self setSteepConesVoltage:0.0];
+    [self setIeCommonVoltage:0.0];
+    [self setMainSpecSupplyVoltage:0.0];
+}
+
+- (void) turnOffPreSpec
+{
+    NSLog(@"ORHVcROI: turning off pre-spectrometer\n");
+    for(int i=1; i<=4; i++) [self setPreSpecIeVoltage:0.0 withIndex:i];
+    [self setPreSpecVesselVoltage:0.0];
+}
+
+- (int) getSupplyOffset:(double)voltage forConfig:(int)config
+{
+    // withMoS - config=1, withoutMoS - config=0
+    NSString* emessage = @"ORHVcRIO: post-regulation not tested for ";
+    if(config == 0){
+        if(voltage >= 6000 && voltage < 10000) return 15;
+        else if(voltage >= 17000 && voltage < 19000) return 22;
+        else if(voltage >= 29000 && voltage < kHVcRIOMainSpecMaxVoltage) return 24;
+        else{
+            NSLog([NSString stringWithFormat:@"%@%.2f V!\n",emessage,voltage]);
+            return -100;
+        }
+    }
+    else if(config == 1){
+        if(voltage >= 6000 && voltage < 8000) return 23;
+        else if(voltage >= 17000 && voltage < 19000) return 28;
+        else if(voltage >= 30000 && voltage < kHVcRIOMainSpecMaxVoltage) return 38;
+        else{
+            NSLog([NSString stringWithFormat:@"%@%.2f V!\n",emessage,voltage]);
+            return -100;
+        }
+    }
+    else{
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: configuration %i not recognized\n", config]);
+        return -100;
+    }
+}
+
+- (double) scaleFactorCheck:(double)value
+{
+    if(value < kHVcRIOScaleFactorMin){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: scale factor out of range, setting to %.2f\n", kHVcRIOScaleFactorMin]);
+        return kHVcRIOScaleFactorMin;
+    }
+    else if(value > kHVcRIOScaleFactorMax){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: scale factor out of range, setting to %.2f\n", kHVcRIOScaleFactorMax]);
+        return kHVcRIOScaleFactorMax;
+    }
+    else return value;
+}
+
+- (void) updateScaleFactor:(NSMutableDictionary*)dict
+{
+    if(mainSpecRamping){
+        [self performSelector:@selector(updateScaleFactor:) withObject:dict afterDelay:pollTime];
+        return;
+    }
+    double sf = [self readVesselVoltage] / [[self setPointAtIndex:[self spIndex:@"mainSpecVesselVoltage"]] doubleValue];
+    sf *= [[dict objectForKey:@"defSF"] doubleValue];
+    NSNumber* sumSF = [NSNumber numberWithDouble:([[dict objectForKey:@"sumSF"] doubleValue] + sf)];
+    [dict setValue:sumSF forKey:@"sumSF"];
+    [dict setValue:[NSNumber numberWithInt:([[dict objectForKey:@"stepCount"] intValue]+1)] forKey:@"stepCount"];
+    if([[dict objectForKey:@"stepCount"] intValue] < [[dict objectForKey:@"nsteps"] intValue]){
+        [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelEstimatingScaleFactor object:self];
+        [self performSelector:@selector(updateScaleFactor:) withObject:dict afterDelay:pollTime];
+    }
+    else scaleFactorEstimating = NO;
+}
+
+- (double) getScaleFactor:(double)voltage estimateTime:(double)time withDefault:(double)defSF
+{
+    int nsteps = floor(time/pollTime);
+    if(!pollTime){
+        nsteps = 1;
+        NSLog(@"ORHVcRIO: warning - poll time set to never, using previously measured vessel voltage to estimate scale factor\n");
+    }
+    NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithDouble:0.0],   @"sumSF",
+                                 [NSNumber numberWithDouble:defSF], @"defSF",
+                                 [NSNumber numberWithInt:nsteps],   @"nsteps",
+                                 [NSNumber numberWithInt:0],        @"stepCount", nil];
+    scaleFactorEstimating = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelEstimatingScaleFactor object:self];
+    [self updateScaleFactor:dict];
+    return ([[dict objectForKey:@"sumVoltage"] doubleValue] / [[dict objectForKey:@"stepCount"] intValue]);
+}
+
+- (double) getPostRegulationScaleFactor:(double)voltage
+{
+    for(int i=0; i<[self numPostRegulationPoints]; i++)
+        if(voltage == [self vesselVoltageSetPoint:i])
+            return [self scaleFactorCheck:[self postRegulationScaleFactor:i]];
+    voltage = floor(voltage);
+    for(int i=0; i<[self numPostRegulationPoints]; i++)
+        if(voltage == [self vesselVoltageSetPoint:i])
+            return [self scaleFactorCheck:[self postRegulationScaleFactor:i]];
+    // return (7004.5 - 0.003*voltage);
+    return 6999.2; // ideal default value for 18370 V
+}
+
+- (double) estimateScaleFactorPostReg:(double)voltage withDefault:(double)defSF supplyOffset:(int)offset
+{
+    //[self setVesselVoltageWithPostReg:voltage scaleFactor:defSF andSupplyOffset:offset];
+    double sf = [self getScaleFactor:voltage estimateTime:7*pollTime withDefault:defSF];
+    if(sf != [self scaleFactorCheck:sf]){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: estimated scale factor %.1f out of range, reverting to default value %.2f\n",sf,defSF]);
+        return defSF;
+    }
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting scale factor to estimated value %.2f",sf]);
+    return sf;
+}
+
+- (void) setPostRegulation:(double)voltage scaleFactor:(double)sf
+{
+    for(int i=0; i<[self numPostRegulationPoints]; i++)
+        if(voltage == [self vesselVoltageSetPoint:i]){
+            NSLog([NSString stringWithFormat:@"ORHVcRIO: setting post-regulation scale factor to %f\n", sf]);
+            [self setPostRegulationScaleFactor:i withValue:sf];
+            return;
+        }
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: creating new post-regulation point at %.2f V with scale factor %.2f\n",voltage,sf]);
+    [self setPostRegulationScaleFactor:[self numPostRegulationPoints] withValue:sf];
+    [self setVesselVoltageSetPoint:[self numPostRegulationPoints] withValue:voltage];
+}
+
+- (void) setVesselVoltageWithPostReg:(double)voltage scaleFactor:(double)sf supplyOffset:(int)offset
+{
+    voltage = MIN(ABS(voltage), kHVcRIOMainSpecMaxVoltage);
+    NSLog([NSString stringWithFormat:@"ORHVcRIO: setting vessel voltage with post regulation to %.2f V\n",voltage]);
+    sf = [self scaleFactorCheck:sf];
+    double k35 = [self readK35Voltage];
+    if(k35 == 0.0 && [self readMainSpecVesselVoltage] > 50.0){
+        NSLog(@"ORHVcRIO: incorrect K35 sensor reading! Aborting set voltage with post-regulation\n");
+        return;
+    }
+    double vesselVoltage = [self readVesselVoltage];
+    double mainSpecVoltage = voltage + offset;
+    if(voltage > vesselVoltage){
+        [self setPostRegVoltage:(voltage/sf)];
+        if(ABS([self readMainSpecVesselSetVoltage] - mainSpecVoltage) > 1)
+            [self setMainSpecSupplyVoltage:mainSpecVoltage];
+    }
+    else if(voltage < vesselVoltage){
+        if(ABS([self readMainSpecVesselSetVoltage] - mainSpecVoltage) > 1)
+            [self setMainSpecSupplyVoltage:mainSpecVoltage];
+        [self setPostRegVoltage:(voltage/sf)];
+    }
+    if(voltage == k35) NSLog(@"ORHVcRIO: voltage setpoint unchanged\n");
+}
+
+- (void) updateVesselVoltageWithPostReg:(NSDictionary*)dict
+{
+    if([[dict objectForKey:@"stepCount"] intValue] >= 0)
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(updateVesselVoltageWithPostReg:) object:dict];
+    if(mainSpecRamping || scaleFactorEstimating){
+        [self performSelector:@selector(updateVesselVoltageWithPostReg:) withObject:dict afterDelay:pollTime];
+        return;
+    }
+    double setPoint = [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue];
+    double offset = [[dict objectForKey:@"offset"] doubleValue];
+    double voltage = [self readVesselVoltage];
+    if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue] + offset){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: set point changed during ramping %f %f \n",setPoint,[[dict objectForKey:@"setPoint"] doubleValue]]);
+        [dict setValue:[NSNumber numberWithDouble:voltage]  forKey:@"startVoltage"];
+        [dict setValue:[NSNumber numberWithDouble:setPoint] forKey:@"setPoint"];
+        [dict setValue:[NSNumber numberWithInt:-1]          forKey:@"stepCount"];
+    }
+    [dict setValue:[dict objectForKey:@"diff0"] forKey:@"diff1"];
+    [dict setValue:[NSNumber numberWithDouble:(voltage-setPoint)] forKey:@"diff0"];
+    if(ABS([[dict objectForKey:@"diff0"] doubleValue]) < [[dict objectForKey:@"precision"] doubleValue] &&
+       ABS([[dict objectForKey:@"diff1"] doubleValue]) < [[dict objectForKey:@"precision"] doubleValue]){
+        NSLog([NSString stringWithFormat:@"ORHVcRIO: main spectrometer vessel voltage successfully ramped from %.2f V to %.2f V\n",
+               [[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
+        [dict release];
+        mainSpecPostRegRamping = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRampSuccess object:self];
+        return;
+    }
+    int stepCount = [[dict objectForKey:@"stepCount"] intValue] + 1;
+    [dict setValue:[NSNumber numberWithInt:stepCount] forKey:@"stepCount"];
+    if(stepCount % 10 == 0 && stepCount > 0){
+        if(stepCount < 30){
+            NSLog(@"ORHVcRIO: starting estimation of new post-regulation scale factor\n");
+            double sf = [[dict objectForKey:@"scaleFactor"] doubleValue];
+            sf = [self estimateScaleFactorPostReg:setPoint withDefault:sf supplyOffset:offset];
+            [self setPostRegulation:setPoint-offset scaleFactor:sf];
+            [self setVesselVoltageWithPostReg:(setPoint-offset) scaleFactor:sf supplyOffset:offset];
+            [dict setValue:[NSNumber numberWithDouble:sf] forKey:@"scaleFactor"];
+        }
+        else{
+            NSLog(@"ORHVcRIO: failed to ramp main spectrometer voltage with post-regulation\n");
+            [dict release];
+            mainSpecPostRegRamping = NO;
+            [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRampFailure object:self];
+            return;
+        }
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRamping object:self];
+    [self performSelector:@selector(updateVesselVoltageWithPostReg:) withObject:dict afterDelay:pollTime];
+}
+
+
+- (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config
+{
+    double sf =  7000;//[self getPostRegulationScaleFactor:voltage];
+    // need to take care of the case where the scale factor isn't in the post-regulation table
+    int offset = [self getSupplyOffset:voltage forConfig:config];
+    [self setVesselVoltageWithPostReg:voltage scaleFactor:sf supplyOffset:offset];
+    if(!pollTime){
+        NSLog(@"ORHVcRIO: warning - poll time set to never, not performing precision voltage adjustment\n");
+        return;
+    }
+    NSMutableDictionary* dict = [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  [NSNumber numberWithDouble:voltage],       @"setPoint",
+                                  [NSNumber numberWithDouble:sf],            @"scaleFactor",
+                                  [NSNumber numberWithDouble:offset],        @"offset",
+                                  [NSNumber numberWithDouble:precision],     @"precision",
+                                  [NSNumber numberWithDouble:(voltage-[self readVesselVoltage])], @"diff0",
+                                  [NSNumber numberWithDouble:(2*precision)], @"diff1",
+                                  [NSNumber numberWithInt:-1],               @"stepCount", nil] retain];
+    mainSpecPostRegRamping = YES;
+    [self updateVesselVoltageWithPostReg:dict];
+}
+
+- (void) setVesselVoltageWithoutPostReg:(double)voltage
+{
+    [self turnOffPostReg];
+    [self setMainSpecSupplyVoltage:voltage];
+}
 
 #pragma mark •••Adc or Bit Processing Protocol
 - (void) processIsStarting

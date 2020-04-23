@@ -51,6 +51,43 @@
     IBOutlet ORValueBarGroupView*  queueValueBar;
     IBOutlet NSButton*    verboseCB;
     IBOutlet NSButton*    showFormattedDatesCB;
+    
+    IBOutlet NSBox* mainSpecBox;
+    IBOutlet NSBox* preSpecBox;
+    IBOutlet NSTextField* retardingPotentialTextField;
+    IBOutlet NSTextField* postRegTextField;
+    IBOutlet NSTextField* pollTimeTextField;
+    IBOutlet NSTextField* mainSpecVoltageTextField;
+    IBOutlet NSTextField* ieCommonTextField;
+    IBOutlet NSTextField* preSpecVoltageTextField;
+    IBOutlet NSTextField* westConeTextField;
+    IBOutlet NSTextField* eastConeTextField;
+    IBOutlet NSTextField* southConeTextField;
+    IBOutlet NSTextField* northConeTextField;
+    IBOutlet NSTextField* wireElectrodeTextField;
+    IBOutlet NSTextField* setMainSpecVoltageTextField;
+    IBOutlet NSTextField* setIeCommonTextField;
+    IBOutlet NSTextField* setEwSteepConeTextField;
+    IBOutlet NSTextField* setPreSpecVoltageTextField;
+    IBOutlet NSTextField* setSouthConeTextField;
+    IBOutlet NSTextField* setNorthConeTextField;
+    IBOutlet NSTextField* setWireElectrodeTextField;
+    IBOutlet NSTextField* mainSpecStatusTextField;
+    IBOutlet NSButton* setMainSpecVoltageButton;
+    IBOutlet NSButton* setIECommonButton;
+    IBOutlet NSButton* setEWSteepConesButton;
+    IBOutlet NSButton* setPreSpecVoltageButton;
+    IBOutlet NSButton* setSouthConeButton;
+    IBOutlet NSButton* setNorthConeButton;
+    IBOutlet NSButton* setWireElectrodeButton;
+    IBOutlet NSButton* enablePostRegButton;
+    IBOutlet NSButton* mainSpecOffButton;
+    IBOutlet NSButton* postRegOffButton;
+    IBOutlet NSButton* preSpecOffButton;
+    IBOutlet NSButton* currentSetPointButton;
+    IBOutlet NSPopUpButton* postRegConfigPU;
+    IBOutlet NSTextField* postRegPrecisionTextField;
+    IBOutlet NSTextField* postRegDefSFTextField;
 }
 
 #pragma mark ***Initialization
@@ -75,6 +112,13 @@
 - (void) postRegulationPointAdded:(NSNotification*)aNote;
 - (void) postRegulationPointRemoved:(NSNotification*)aNote;
 - (void) updatePostRegulationTable;
+- (void) mainSpecRamping:(NSNotification*)aNote;
+- (void) mainSpecRampSuccess:(NSNotification*)aNote;
+- (void) mainSpecRampFailure:(NSNotification*)aNote;
+- (void) estimatingScaleFactor:(NSNotification*)aNote;
+- (void) postRegPrecisionChanged:(NSNotification*)aNote;
+- (void) postRegConfigChanged:(NSNotification*)aNote;
+- (void) postRegDefSFChanged:(NSNotification*)aNote;
 
 #pragma mark ***Actions
 
@@ -96,6 +140,38 @@
 - (IBAction) savePostRegulationScaleFactors: (id) aSender;
 - (IBAction) pollTimeAction: (id) aSender;
 - (BOOL) tableView:(NSTableView *)tableView shouldSelectRow:(int)row;
+- (IBAction) setMainSpecVoltageTextAction:(id)sender;
+- (IBAction) setIeCommonTextAction:(id)sender;
+- (IBAction) setEwSteepConeTextAction:(id)sender;
+- (IBAction) setPreSpecVoltageTextAction:(id)sender;
+- (IBAction) setSouthConeTextAction:(id)sender;
+- (IBAction) setNorthConeTextAction:(id)sender;
+- (IBAction) setWireElectrodeTextAction:(id)sender;
+- (IBAction) setMainSpecVoltageAction:(id)sender;
+- (IBAction) setIECommonAction:(id)sender;
+- (IBAction) setEWSteepConesAction:(id)sender;
+- (IBAction) setPreSpecVoltageAction:(id)sender;
+- (IBAction) setSouthConeAction:(id)sender;
+- (IBAction) setNorthConeAction:(id)sender;
+- (IBAction) setWireElectrodeAction:(id)sender;
+- (IBAction) mainSpecOffAction:(id)sender;
+- (IBAction) postRegOffAction:(id)sender;
+- (IBAction) preSpecOffAction:(id)sender;
+- (IBAction) currentSetPointAction:(id)sender;
+- (IBAction) postRegConfigAction:(id)sender;
+- (IBAction) postRegPrecisionAction:(id)sender;
+- (IBAction) postRegDefSFAction:(id)sender;
+
+#pragma mark •••Convenience Methods
+- (double) checkTFVoltage:(id)sender withMin:(double)minV andMax:(double)maxV;
+- (double) checkVoltage:(double)voltage withMin:(double)minV andMax:(double)maxV;
+- (void) changeButton:(NSButton*)button withColor:(NSColor*)color;
+- (BOOL) checkButtonStatus:(NSButton*)button fromTextField:(NSTextField*)text
+                withString:(NSString*)str withMin:(double)minv andMax:(double)maxv;
+- (BOOL) checkButtonStatus:(NSButton*)button fromTextField:(NSTextField*)text withString:(NSString*)str;
+- (void) checkButtonStatus;
+- (void) currentSetPoints;
+
 @end
 
 
