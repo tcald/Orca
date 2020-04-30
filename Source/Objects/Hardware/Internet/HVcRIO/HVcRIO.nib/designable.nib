@@ -22,6 +22,7 @@
                 <outlet property="mainSpecOffButton" destination="l5i-yG-Rv8" id="sbp-NX-XzH"/>
                 <outlet property="mainSpecStatusTextField" destination="Pv8-hI-HL3" id="Lxh-k2-Zkq"/>
                 <outlet property="mainSpecVoltageTextField" destination="Kkj-jc-dZR" id="nrN-nu-7yx"/>
+                <outlet property="measuredValueTableView" destination="0eC-dY-za8" id="dGS-Mc-kpd"/>
                 <outlet property="northConeTextField" destination="Ih6-2N-FHT" id="Qaf-h8-YP9"/>
                 <outlet property="orcaHasControlField" destination="V0H-WK-9WT" id="yMG-eq-GDs"/>
                 <outlet property="pollTimePU" destination="zVk-KV-1e3" id="Fmu-o1-s2f"/>
@@ -37,6 +38,7 @@
                 <outlet property="preSpecOffButton" destination="Pwk-hY-oVW" id="96X-In-Tbd"/>
                 <outlet property="preSpecVoltageTextField" destination="il1-Lm-pAL" id="eX8-e9-sJX"/>
                 <outlet property="progressWheel" destination="KuK-LK-YmQ" id="98o-hA-wkN"/>
+                <outlet property="queueValueBar" destination="d6n-bE-FHO" id="SAC-0O-Iuf"/>
                 <outlet property="readPostRegulationButton" destination="ZIk-CZ-Kmh" id="Vmc-7f-Cf5"/>
                 <outlet property="readSetPointFileButton" destination="Ymd-sD-4Jp" id="8c0-hj-HO4"/>
                 <outlet property="removePostRegulationPointButton" destination="Pj2-5O-9nA" id="nx8-ER-d1X"/>
@@ -137,13 +139,40 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DQV-xl-B5H">
+                        <rect key="frame" x="589" y="79" width="421" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="--" id="6ym-VQ-7Ob">
+                            <font key="font" size="15" name="Geneva"/>
+                            <color key="textColor" red="0.078694656449999997" green="0.1157358394" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XIY-0Z-jwL">
+                        <rect key="frame" x="589" y="51" width="421" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="--" id="fz8-4S-PAs">
+                            <font key="font" size="15" name="Geneva"/>
+                            <color key="textColor" red="0.078694656449999997" green="0.1157358394" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V0H-WK-9WT">
+                        <rect key="frame" x="589" y="23" width="421" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="--" id="BoU-6X-nLi">
+                            <font key="font" size="15" name="Geneva"/>
+                            <color key="textColor" red="0.078694656449999997" green="0.1157358394" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                     <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4la-OX-LU3">
                         <rect key="frame" x="-8" y="-10" width="1561" height="571"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Basic Ops" identifier="" id="RRi-nc-eAG">
-                                <view key="view" ambiguous="YES" id="iRU-wd-EU8">
+                                <view key="view" id="iRU-wd-EU8">
                                     <rect key="frame" x="10" y="33" width="1541" height="525"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -913,7 +942,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Advanced" identifier="" id="xQ3-TI-eaw">
-                                <view key="view" id="lqs-dp-GP3">
+                                <view key="view" ambiguous="YES" id="lqs-dp-GP3">
                                     <rect key="frame" x="10" y="33" width="1541" height="525"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1022,7 +1051,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" ambiguous="YES" id="CcP-Rm-WGU">
                                                 <rect key="frame" x="1" y="0.0" width="405" height="282"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="AJ2-cn-67M" id="kBf-96-6fY">
                                                         <rect key="frame" x="0.0" y="0.0" width="405" height="259"/>
@@ -1121,7 +1150,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" ambiguous="YES" id="E24-RG-mM8">
                                                 <rect key="frame" x="1" y="0.0" width="497" height="230"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="hUT-ir-kfb" id="VQ0-Pu-OqC">
                                                         <rect key="frame" x="0.0" y="0.0" width="497" height="207"/>
@@ -1299,33 +1328,6 @@
                                                 <action selector="pushReadBacksToSetPointsAction:" target="-2" id="0cc-GE-gjh"/>
                                             </connections>
                                         </button>
-                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DQV-xl-B5H">
-                                            <rect key="frame" x="567" y="80" width="421" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="--" id="6ym-VQ-7Ob">
-                                                <font key="font" size="15" name="Geneva"/>
-                                                <color key="textColor" red="0.078694656449999997" green="0.1157358394" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XIY-0Z-jwL">
-                                            <rect key="frame" x="567" y="52" width="421" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="--" id="fz8-4S-PAs">
-                                                <font key="font" size="15" name="Geneva"/>
-                                                <color key="textColor" red="0.078694656449999997" green="0.1157358394" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V0H-WK-9WT">
-                                            <rect key="frame" x="567" y="24" width="421" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="--" id="BoU-6X-nLi">
-                                                <font key="font" size="15" name="Geneva"/>
-                                                <color key="textColor" red="0.078694656449999997" green="0.1157358394" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EiM-OL-qJj">
                                             <rect key="frame" x="114" y="452" width="157" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1398,7 +1400,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" ambiguous="YES" id="vjs-7f-7c9">
                                                 <rect key="frame" x="1" y="0.0" width="483" height="230"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="cAM-5F-bzv" id="0eC-dY-za8">
                                                         <rect key="frame" x="0.0" y="0.0" width="483" height="205"/>

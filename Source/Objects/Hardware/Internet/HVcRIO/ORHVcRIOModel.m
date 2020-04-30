@@ -1111,9 +1111,9 @@ static NSString* itemsToShip[kNumToShip*2] = {
                           [NSNumber numberWithInt:103], @"preSpecSouthConeVoltage",
                           [NSNumber numberWithInt:111], @"preSpecIeVoltage",
                           [NSNumber numberWithInt:119], @"preSpecNorthConeVoltage",
-                          [NSNumber numberWithInt:128], @"steepConeWestVoltage",
-                          [NSNumber numberWithInt:228], @"steepConeEastVoltage",
                           [NSNumber numberWithInt:303], @"k35Voltage",
+                          [NSNumber numberWithInt:364], @"steepConeWestVoltage",
+                          [NSNumber numberWithInt:532], @"steepConeEastVoltage",
                           [NSNumber numberWithInt:651], @"postRegSetVoltage", nil] retain];
 }
 
@@ -2094,6 +2094,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     double voltage = MIN(ABS(value), kHVcRIOPreSpecMaxVoltage);
     NSLog([NSString stringWithFormat:@"ORHVcRIO: setting pre-spec vessel voltage to %.2f V\n",voltage]);
     [self setSetPoint:[self spIndex:@"preSpecVoltage"] withValue:voltage];
+    [self writeSetpoints];
 }
 
 - (void) setPreSpecIeVoltage:(double)value withIndex:(int)anIndex

@@ -657,7 +657,7 @@
 
 - (void) currentSetPoints
 {
-    [setMainSpecVoltageTextField setStringValue:[model setPointAtIndex:[model spIndex:@"mainSpecVoltage"]]];
+    [setMainSpecVoltageTextField setStringValue:[model setPointAtIndex:[model spIndex:@"mainSpecSupplyVoltage"]]];
     [setIeCommonTextField        setStringValue:[model setPointAtIndex:[model spIndex:@"ieCommonVoltage"]]];
     [setEwSteepConeTextField     setStringValue:[model setPointAtIndex:[model spIndex:@"innerElectrodeWest"]]];
     [setPreSpecVoltageTextField  setStringValue:[model setPointAtIndex:[model spIndex:@"preSpecVoltage"]]];
