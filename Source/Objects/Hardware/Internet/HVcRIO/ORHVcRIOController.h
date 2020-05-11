@@ -84,10 +84,20 @@
     IBOutlet NSButton* mainSpecOffButton;
     IBOutlet NSButton* postRegOffButton;
     IBOutlet NSButton* preSpecOffButton;
+    IBOutlet NSPanel* confirmMainSpecOffPanel;
+    IBOutlet NSButton* confirmMainSpecOffButton;
+    IBOutlet NSButton* cancelMainSpecOffButton;
+    IBOutlet NSPanel* confirmPostRegOffPanel;
+    IBOutlet NSButton* confirmPostRegOffButton;
+    IBOutlet NSButton* cancelPostRegOffButton;
+    IBOutlet NSPanel* confirmPreSpecOffPanel;
+    IBOutlet NSButton* confirmPreSpecOffButton;
+    IBOutlet NSButton* cancelPreSpecOffButton;
     IBOutlet NSButton* currentSetPointButton;
     IBOutlet NSPopUpButton* postRegConfigPU;
     IBOutlet NSTextField* postRegPrecisionTextField;
     IBOutlet NSTextField* postRegDefSFTextField;
+    IBOutlet NSTextField* vmScaleFactorTextField;
 }
 
 #pragma mark ***Initialization
@@ -119,6 +129,7 @@
 - (void) postRegPrecisionChanged:(NSNotification*)aNote;
 - (void) postRegConfigChanged:(NSNotification*)aNote;
 - (void) postRegDefSFChanged:(NSNotification*)aNote;
+- (void) vmScaleFactorChanged:(NSNotification*)aNote;
 
 #pragma mark ***Actions
 
@@ -155,12 +166,19 @@
 - (IBAction) setNorthConeAction:(id)sender;
 - (IBAction) setWireElectrodeAction:(id)sender;
 - (IBAction) mainSpecOffAction:(id)sender;
+- (IBAction) confirmMainSpecOffAction:(id)sender;
+- (IBAction) cancelMainSpecOffAction:(id)sender;
 - (IBAction) postRegOffAction:(id)sender;
+- (IBAction) confirmPostRegOffAction:(id)sender;
+- (IBAction) cancelPostRegOffAction:(id)sender;
 - (IBAction) preSpecOffAction:(id)sender;
+- (IBAction) confirmPreSpecOffAction:(id)sender;
+- (IBAction) cancelPreSpecOffAction:(id)sender;
 - (IBAction) currentSetPointAction:(id)sender;
 - (IBAction) postRegConfigAction:(id)sender;
 - (IBAction) postRegPrecisionAction:(id)sender;
 - (IBAction) postRegDefSFAction:(id)sender;
+- (IBAction) vmScaleFactorAction:(id)sender;
 
 #pragma mark •••Convenience Methods
 - (double) checkTFVoltage:(id)sender withMin:(double)minV andMax:(double)maxV;

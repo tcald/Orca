@@ -41,11 +41,11 @@
     [pollTimeTextField setStringValue:[pollTimePU title]];
     [mainSpecBox setFillColor:[NSColor colorWithRed:0.2 green:0.3 blue:0.5 alpha:0.1]];
     [preSpecBox setFillColor:[NSColor colorWithRed:0.2 green:0.3 blue:0.5 alpha:0.1]];
-    [mainSpecOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
+    //[mainSpecOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
     [mainSpecOffButton setTitle:@"Turn Off\nMain Spec\nHV"];
-    [postRegOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
+    //[postRegOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
     [postRegOffButton setTitle:@"Post\nRegulation\nOff"];
-    [preSpecOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
+    //[preSpecOffButton setImage:[NSImage imageNamed:@"VoltageOff"]];
     [preSpecOffButton setTitle:@"Turn Off\nPre Spec\nHV"];
     [self currentSetPoints];
     double dv = [model readVesselVoltage] - [model readMainSpecVesselSetVoltage];
@@ -178,6 +178,11 @@
                      selector : @selector(postRegDefSFChanged:)
                          name : ORHVcRIOModelPostRegDefSFChanged
                        object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(vmScaleFactorChanged:)
+                         name : ORHVcRIOModelVMScaleFactorChanged
+                       object : nil];
 }
 
 - (void) setModel:(id)aModel
@@ -191,6 +196,9 @@
 {
     [super updateWindow];
     [self lockChanged:nil];
+    [self cancelMainSpecOffAction:nil];
+    [self cancelPostRegOffAction:nil];
+    [self cancelPreSpecOffAction:nil];
     [self setPointChanged:nil];
     [self setPointFileChanged:nil];
     
@@ -207,6 +215,7 @@
     [self postRegPrecisionChanged:nil];
     [self postRegDefSFChanged:nil];
     [self postRegConfigChanged:nil];
+    [self vmScaleFactorChanged:nil];
 }
 
 - (void) pollTimeChanged:(NSNotification*)aNote
@@ -367,6 +376,11 @@
     [postRegConfigPU setIntValue:[model postRegConfig]];
 }
 
+- (void) vmScaleFactorChanged:(NSNotification*)aNote
+{
+    [vmScaleFactorTextField setStringValue:[NSString stringWithFormat:@"%.3f", [model vmScaleFactor]]];
+}
+
 - (void) checkGlobalSecurity
 {
     BOOL secure = [[[NSUserDefaults standardUserDefaults] objectForKey:OROrcaSecurityEnabled] boolValue];
@@ -458,6 +472,9 @@
     [mainSpecOffButton                  setEnabled:!locked];
     [postRegOffButton                   setEnabled:!locked];
     [preSpecOffButton                   setEnabled:!locked];
+    [postRegPrecisionTextField          setEnabled:!locked];
+    [postRegDefSFTextField              setEnabled:!locked];
+    [vmScaleFactorTextField             setEnabled:!locked];
     [currentSetPointButton              setEnabled:!locked];
 }
 
@@ -625,18 +642,60 @@
 
 - (IBAction) mainSpecOffAction:(id)sender
 {
+    [self endEditing];
+    [[self window] beginSheet:confirmMainSpecOffPanel completionHandler:nil];
+}
+
+- (IBAction) confirmMainSpecOffAction:(id)sender
+{
     [model turnOffHV];
+    [confirmMainSpecOffPanel orderOut:nil];
+    [NSApp endSheet:confirmMainSpecOffPanel];
+}
+
+- (IBAction) cancelMainSpecOffAction:(id)sender
+{
+    [confirmMainSpecOffPanel orderOut:nil];
+    [NSApp endSheet:confirmMainSpecOffPanel];
 }
 
 - (IBAction) postRegOffAction:(id)sender
 {
+    [self endEditing];
+    [[self window] beginSheet:confirmPostRegOffPanel completionHandler:nil];
+}
+
+- (IBAction) confirmPostRegOffAction:(id)sender
+{
     [model turnOffPostReg];
     [enablePostRegButton setState:NO];
+    [confirmPostRegOffPanel orderOut:nil];
+    [NSApp endSheet:confirmPostRegOffPanel];
+}
+
+- (IBAction) cancelPostRegOffAction:(id)sender
+{
+    [confirmPostRegOffPanel orderOut:nil];
+    [NSApp endSheet:confirmPostRegOffPanel];
 }
 
 - (IBAction) preSpecOffAction:(id)sender
 {
+    [self endEditing];
+    [[self window] beginSheet:confirmPreSpecOffPanel completionHandler:nil];
+}
+
+- (IBAction) confirmPreSpecOffAction:(id)sender
+{
     [model turnOffPreSpec];
+    [confirmPreSpecOffPanel orderOut:nil];
+    [NSApp endSheet:confirmPreSpecOffPanel];
+}
+
+- (IBAction) cancelPreSpecOffAction:(id)sender
+{
+    [confirmPreSpecOffPanel orderOut:nil];
+    [NSApp endSheet:confirmPreSpecOffPanel];
 }
 
 - (IBAction) postRegConfigAction:(id)sender
@@ -653,6 +712,11 @@
 - (IBAction) postRegDefSFAction:(id)sender
 {
     [model setPostRegDefSF:[[sender stringValue] doubleValue]];
+}
+
+- (IBAction) vmScaleFactorAction:(id)sender
+{
+    [model setVMScaleFactor:[[sender stringValue] doubleValue]];
 }
 
 - (void) currentSetPoints

@@ -74,6 +74,7 @@
         double              postRegPrecision;
         double              postRegDefSF;
         int                 postRegConfig;
+        double              vmScaleFactor;
 }
 
 #pragma mark ***Initialization
@@ -106,6 +107,8 @@
 - (BOOL) showFormattedDates;
 - (void) shipRecords;
 - (void) checkShipValueDictionary;
+- (double) vmScaleFactor;
+- (void) setVMScaleFactor:(double)sf;
 
 - (NSString*) title;
 
@@ -254,6 +257,7 @@ extern NSString* ORHVcRIOModelEstimatingScaleFactor;
 extern NSString* ORHVcRIOModelPostRegPrecisionChanged;
 extern NSString* ORHVcRIOModelPostRegConfigChanged;
 extern NSString* ORHVcRIOModelPostRegDefSFChanged;
+extern NSString* ORHVcRIOModelVMScaleFactorChanged;
 
 @interface PostRegulationPoint : NSObject
 {

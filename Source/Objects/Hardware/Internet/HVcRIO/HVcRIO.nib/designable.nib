@@ -9,6 +9,15 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ORHVcRIOController">
             <connections>
                 <outlet property="addPostRegulationPointButton" destination="R0A-8B-EPL" id="7CO-eG-FeO"/>
+                <outlet property="cancelMainSpecOffButton" destination="Rjx-WL-gqG" id="J7v-5i-Ea0"/>
+                <outlet property="cancelPostRegOffButton" destination="lbM-Ny-at2" id="zSp-rN-Vgy"/>
+                <outlet property="cancelPreSpecOffButton" destination="xRB-Tw-m3d" id="bBN-ZS-A4P"/>
+                <outlet property="confirmMainSpecOffButton" destination="Ui8-AR-lAd" id="cI3-4O-nCC"/>
+                <outlet property="confirmMainSpecOffPanel" destination="m9A-jj-g37" id="dT5-1j-HHI"/>
+                <outlet property="confirmPostRegOffButton" destination="Xps-7T-nMS" id="GhY-BS-Pvt"/>
+                <outlet property="confirmPostRegOffPanel" destination="4sd-08-xT2" id="AS5-Di-JtM"/>
+                <outlet property="confirmPreSpecOffButton" destination="DdZ-wF-pkj" id="BK2-bR-iH8"/>
+                <outlet property="confirmPreSpecOffPanel" destination="tSU-0C-HLY" id="b2Z-ZF-vb0"/>
                 <outlet property="currentSetPointButton" destination="2pE-5C-Y45" id="u4c-w3-fio"/>
                 <outlet property="eastConeTextField" destination="7CC-Kb-hyq" id="3Fl-TN-UhI"/>
                 <outlet property="enablePostRegButton" destination="ToB-fj-0ns" id="WWV-2j-0gr"/>
@@ -62,6 +71,7 @@
                 <outlet property="showFormattedDatesCB" destination="EiM-OL-qJj" id="wDX-56-Euh"/>
                 <outlet property="southConeTextField" destination="HJS-1f-fad" id="eBx-iA-wE0"/>
                 <outlet property="verboseCB" destination="emZ-mR-bhg" id="Xez-Yy-UC1"/>
+                <outlet property="vmScaleFactorTextField" destination="LG7-Dh-Ncf" id="Xfz-GC-JIe"/>
                 <outlet property="westConeTextField" destination="9YF-yp-vUv" id="ste-nl-myd"/>
                 <outlet property="window" destination="5" id="38"/>
                 <outlet property="wireElectrodeTextField" destination="rGV-Jb-ltC" id="dfX-6w-nhf"/>
@@ -172,7 +182,7 @@
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Basic Ops" identifier="" id="RRi-nc-eAG">
-                                <view key="view" id="iRU-wd-EU8">
+                                <view key="view" ambiguous="YES" id="iRU-wd-EU8">
                                     <rect key="frame" x="10" y="33" width="1541" height="525"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -441,10 +451,15 @@
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pwk-hY-oVW">
                                                         <rect key="frame" x="547" y="78" width="75" height="75"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="q8Q-40-BOS">
+                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="q8Q-40-BOS">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                                                <color key="value" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="preSpecOffAction:" target="-2" id="fZW-DR-IJf"/>
                                                         </connections>
@@ -577,6 +592,7 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
+                                            <font key="titleFont" metaFont="message" size="11"/>
                                         </box>
                                         <box fixedFrame="YES" boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="2JO-ZY-ps8">
                                             <rect key="frame" x="104" y="176" width="644" height="276"/>
@@ -673,12 +689,17 @@
                                                         </connections>
                                                     </button>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l5i-yG-Rv8">
-                                                        <rect key="frame" x="547" y="131" width="75" height="75"/>
+                                                        <rect key="frame" x="547" y="138" width="75" height="64"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="Yx5-o6-gvB">
+                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="Yx5-o6-gvB">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                                                <color key="value" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="mainSpecOffAction:" target="-2" id="wYM-u0-I13"/>
                                                         </connections>
@@ -686,10 +707,15 @@
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ja0-60-zNM">
                                                         <rect key="frame" x="547" y="36" width="75" height="75"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="pRb-YC-Se1">
+                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="pRb-YC-Se1">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                                                <color key="value" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="postRegOffAction:" target="-2" id="efI-iA-bHn"/>
                                                         </connections>
@@ -889,6 +915,7 @@
                                                     </button>
                                                 </subviews>
                                             </view>
+                                            <font key="titleFont" metaFont="message" size="11"/>
                                         </box>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A3s-Es-5Rp">
                                             <rect key="frame" x="904" y="100" width="539" height="37"/>
@@ -942,7 +969,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Advanced" identifier="" id="xQ3-TI-eaw">
-                                <view key="view" ambiguous="YES" id="lqs-dp-GP3">
+                                <view key="view" id="lqs-dp-GP3">
                                     <rect key="frame" x="10" y="33" width="1541" height="525"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1381,7 +1408,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="eij-uj-eZO">
-                                            <rect key="frame" x="882" y="119" width="146" height="28"/>
+                                            <rect key="frame" x="815" y="120" width="146" height="28"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="Read Measured Values" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jrb-ig-bO2">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1522,6 +1549,15 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bEm-05-QPL">
+                                            <rect key="frame" x="913" y="505" width="149" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Volt Meter Scale Factor:" id="UQK-fm-uea">
+                                                <font key="font" usesAppearanceFont="YES"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FGC-qH-jEW">
                                             <rect key="frame" x="1172" y="25" width="91" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1562,6 +1598,19 @@
                                                 <action selector="postRegDefSFAction:" target="-2" id="AwL-0N-iO3"/>
                                             </connections>
                                         </textField>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LG7-Dh-Ncf">
+                                            <rect key="frame" x="932" y="475" width="111" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="1aF-ON-jPa">
+                                                <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="6He-dA-qXf"/>
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="vmScaleFactorAction:" target="-2" id="Vkf-Mp-TQ9"/>
+                                            </connections>
+                                        </textField>
                                     </subviews>
                                 </view>
                             </tabViewItem>
@@ -1575,6 +1624,138 @@
             <point key="canvasLocation" x="695.5" y="-752.5"/>
         </window>
         <customObject id="2377" userLabel="Hex Formatter" customClass="OHexFormatter"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="m9A-jj-g37" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="1865" y="251" width="376" height="166"/>
+            <rect key="screenRect" x="1440" y="-42" width="3840" height="2137"/>
+            <view key="contentView" id="LC5-Eh-AjM">
+                <rect key="frame" x="0.0" y="0.0" width="376" height="166"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ui8-AR-lAd">
+                        <rect key="frame" x="45" y="19" width="98" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="roundTextured" title="Confirm" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fMV-Hc-jMP">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system" size="24"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="confirmMainSpecOffAction:" target="-2" id="h18-0m-wbV"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rjx-WL-gqG">
+                        <rect key="frame" x="226" y="19" width="105" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="roundTextured" title="Cancel" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dgO-YD-6iN">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system" size="24"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelMainSpecOffAction:" target="-2" id="ARz-59-4g9"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s2r-nw-GM8">
+                        <rect key="frame" x="43" y="50" width="290" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" selectable="YES" alignment="center" title="Turn off main spectrometer voltage? Turning off the voltage during tritium operation may trip interlocks/alarms!" id="SKU-UD-eNV">
+                            <font key="font" size="16" name=".SFNSText"/>
+                            <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="275" y="-947"/>
+        </window>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="4sd-08-xT2" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="1865" y="251" width="376" height="166"/>
+            <rect key="screenRect" x="1440" y="-42" width="3840" height="2137"/>
+            <view key="contentView" id="LQe-B0-M9F">
+                <rect key="frame" x="0.0" y="0.0" width="376" height="166"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xps-7T-nMS">
+                        <rect key="frame" x="45" y="19" width="98" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="roundTextured" title="Confirm" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qjU-KV-53G">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system" size="24"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="confirmPostRegOffAction:" target="-2" id="N3Q-Hb-LnM"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lbM-Ny-at2">
+                        <rect key="frame" x="226" y="20" width="105" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="roundTextured" title="Cancel" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ve3-rE-MUx">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system" size="24"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelPostRegOffAction:" target="-2" id="8l5-xf-fhf"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O9W-FD-UET">
+                        <rect key="frame" x="43" y="51" width="290" height="95"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" selectable="YES" alignment="center" title="Turn off post-regulation voltage? Turning off the voltage during tritium operation may trip interlocks/ alarms!" id="oht-4y-JCH">
+                            <font key="font" size="16" name=".SFNSText"/>
+                            <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="695" y="-947"/>
+        </window>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="tSU-0C-HLY" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="1865" y="251" width="375" height="166"/>
+            <rect key="screenRect" x="1440" y="-42" width="3840" height="2137"/>
+            <view key="contentView" id="W0b-Nn-f9u">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="166"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DdZ-wF-pkj">
+                        <rect key="frame" x="44" y="19" width="98" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="roundTextured" title="Confirm" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2e0-DZ-Ci3">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system" size="24"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="confirmPreSpecOffAction:" target="-2" id="IIf-eT-d79"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xRB-Tw-m3d">
+                        <rect key="frame" x="225" y="19" width="105" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="roundTextured" title="Cancel" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hBp-Lv-Yho">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system" size="24"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelPreSpecOffAction:" target="-2" id="0T2-GR-EiE"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8hK-Go-wZ7">
+                        <rect key="frame" x="42" y="50" width="290" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" selectable="YES" alignment="center" title="Turn off post-regulation voltage? Turning off the voltage during tritium operation may trip interlocks/alarms!" id="6j5-jn-VU4">
+                            <font key="font" size="16" name=".SFNSText"/>
+                            <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1115.5" y="-947"/>
+        </window>
     </objects>
     <resources>
         <image name="HVcRIO" width="56.156257629394531" height="72"/>

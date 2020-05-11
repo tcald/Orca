@@ -46,6 +46,7 @@ NSString* ORHVcRIOModelEstimatingScaleFactor        = @"ORHVcRIOModelEstimatingS
 NSString* ORHVcRIOModelPostRegPrecisionChanged      = @"ORHVcRIOModelPostRegPrecisionChanged";
 NSString* ORHVcRIOModelPostRegConfigChanged         = @"ORHVcRIOModelPostRegConfigChanged";
 NSString* ORHVcRIOModelPostRegDefSFChanged          = @"ORHVcRIOModelPostRegDefSFChanged";
+NSString* ORHVcRIOModelVMScaleFactorChanged         = @"ORHVcRIOModelMVScaleFactorChanged";
 NSString* ORHVcRIOLock						        = @"ORHVcRIOLock";
 
 
@@ -971,16 +972,17 @@ static NSString* itemsToShip[kNumToShip*2] = {
 
 @implementation ORHVcRIOModel
 
-/*- (id) init
+- (id) init
 {
     [super init];
     [[self undoManager] disableUndoRegistration];
     [self setPostRegPrecision:kHVcRIOPostRegPrecisionMin];
     [self setPostRegDefSF:(kHVcRIOScaleFactorMin+kHVcRIOScaleFactorMax)/2];
     [self setPostRegConfig:0];
+    [self setVMScaleFactor:-1972.449];
     [[self undoManager] enableUndoRegistration];
     return self;
-}*/
+}
 
 - (void) dealloc
 {
@@ -1623,6 +1625,18 @@ static NSString* itemsToShip[kNumToShip*2] = {
     }
 }
 
+- (double) vmScaleFactor
+{
+    return vmScaleFactor;
+}
+
+- (void) setVMScaleFactor:(double)sf
+{
+    if(sf == vmScaleFactor) return;
+    vmScaleFactor = sf;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelVMScaleFactorChanged object:self];
+}
+
 #pragma mark ***Archival
 - (id) initWithCoder:(NSCoder*)decoder
 {
@@ -1642,6 +1656,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     [self setPostRegPrecision:  [decoder decodeDoubleForKey: @"postRegPrecision"]];
     [self setPostRegDefSF:      [decoder decodeDoubleForKey: @"postRegDefSF"]];
     [self setPostRegConfig:     [decoder decodeIntForKey:    @"postRegConfig"]];
+    [self setVMScaleFactor:     [decoder decodeDoubleForKey: @"vmScaleFactor"]];
     if(!setPoints) [self createSetPointArray];
     
     [self createMeasuredValueArray];
@@ -1667,6 +1682,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     [encoder encodeDouble:postRegPrecision    forKey:@"postRegPrecision"];
     [encoder encodeDouble:postRegDefSF        forKey:@"postRegDefSF"];
     [encoder encodeInteger:postRegConfig      forKey:@"postRegConfig"];
+    [encoder encodeDouble:vmScaleFactor       forKey:@"vmScaleFactor"];
 }
 
 #pragma mark *** Commands
@@ -1898,7 +1914,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
 
 - (double) readK35Voltage
 {
-    return ([[self measuredValueAtIndex:[self mvIndex:@"k35Voltage"]] doubleValue] * kHVcRIOK35ScaleFactor);
+    return ([[self measuredValueAtIndex:[self mvIndex:@"k35Voltage"]] doubleValue] * vmScaleFactor);
 }
 
 - (double) readMainSpecVesselVoltage
@@ -2323,10 +2339,14 @@ static NSString* itemsToShip[kNumToShip*2] = {
         [self performSelector:@selector(updateVesselVoltageWithPostReg:) withObject:dict afterDelay:pollTime];
         return;
     }
+    NSLog(@"ORHVcRIO: updateVesselVoltageWithPostReg step %d\n",
+          [[dict objectForKey:@"stepCount"] intValue]);
     double setPoint = [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue];
     double offset = [[dict objectForKey:@"offset"] doubleValue];
     double voltage = [self readVesselVoltage];
-    if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue] + offset){
+    NSLog(@"ORHVcRIO: updateVesselVoltageWithPostReg step %d, set point %f, read back %f\n",
+          [[dict objectForKey:@"stepCount"] intValue], setPoint, voltage);
+    if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue]){//} + offset){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: set point changed during ramping %f %f \n",setPoint,[[dict objectForKey:@"setPoint"] doubleValue]]);
         [dict setValue:[NSNumber numberWithDouble:voltage]  forKey:@"startVoltage"];
         [dict setValue:[NSNumber numberWithDouble:setPoint] forKey:@"setPoint"];
@@ -2366,10 +2386,9 @@ static NSString* itemsToShip[kNumToShip*2] = {
     [self performSelector:@selector(updateVesselVoltageWithPostReg:) withObject:dict afterDelay:pollTime];
 }
 
-
 - (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config
 {
-    double sf =  7000;//[self getPostRegulationScaleFactor:voltage];
+    double sf =  [self getPostRegulationScaleFactor:voltage];
     // need to take care of the case where the scale factor isn't in the post-regulation table
     int offset = [self getSupplyOffset:voltage forConfig:config];
     [self setVesselVoltageWithPostReg:voltage scaleFactor:sf supplyOffset:offset];
