@@ -308,7 +308,7 @@
 {
     [measuredValueTableView reloadData];
     
-    [expertPCControlOnlyField setStringValue:[model expertPCControlOnly] ? @"Ony Expert PC Can Set Values":@""];
+    [expertPCControlOnlyField setStringValue:[model expertPCControlOnly] ? @"Only Expert PC Can Set Values":@""];
     [zeusHasControlField setStringValue:     [model zeusHasControl]      ? @"ZEUS has control":@""];
     [orcaHasControlField setStringValue:     [model orcaHasControl]      ? @"ORCA has control":@""];
 

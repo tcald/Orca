@@ -69,6 +69,7 @@
         int                 pollTime;
         uint32_t            dataId;
         BOOL                mainSpecRamping;
+        BOOL                mainSpecRampSuccess;
         BOOL                mainSpecPostRegRamping;
         BOOL                scaleFactorEstimating;
         double              postRegPrecision;
@@ -202,10 +203,9 @@
 - (int) getSupplyOffset:(double)voltage forConfig:(int)config;
 - (double) scaleFactorCheck:(double)value;
 - (void) updateScaleFactor:(NSMutableDictionary*)dict;
-- (double) getScaleFactor:(double)voltage estimateTime:(double)time withDefault:(double)defSF;
 - (double) getPostRegulationScaleFactor:(double)voltage;
-- (double) estimateScaleFactorPostReg:(double)voltage withDefault:(double)defSF supplyOffset:(int)offset;
-- (void) setPostRegulation:(double)voltage scaleFactor:(double)sf;
+- (void) estimateScaleFactorPostReg:(double)voltage withDefault:(double)defSF supplyOffset:(int)offset;
+- (void) setPostRegulation:(double)voltage scaleFactor:(double)sf supplyOffset:(double)offset;
 - (void) setVesselVoltageWithPostReg:(double)voltage scaleFactor:(double)sf supplyOffset:(int)offset;
 - (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config;
 - (void) setVesselVoltageWithoutPostReg:(double)voltage;

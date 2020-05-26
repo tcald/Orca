@@ -592,7 +592,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="message" size="11"/>
                                         </box>
                                         <box fixedFrame="YES" boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="2JO-ZY-ps8">
                                             <rect key="frame" x="104" y="176" width="644" height="276"/>
@@ -686,22 +685,6 @@
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="setEWSteepConesAction:" target="-2" id="1Xw-PL-gx6"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l5i-yG-Rv8">
-                                                        <rect key="frame" x="547" y="138" width="75" height="64"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="Yx5-o6-gvB">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
-                                                                <color key="value" name="systemRedColor" catalog="System" colorSpace="catalog"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="mainSpecOffAction:" target="-2" id="wYM-u0-I13"/>
                                                         </connections>
                                                     </button>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ja0-60-zNM">
@@ -913,9 +896,24 @@
                                                             <action selector="setIECommonAction:" target="-2" id="sZt-Gb-FSN"/>
                                                         </connections>
                                                     </button>
+                                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l5i-yG-Rv8">
+                                                        <rect key="frame" x="547" y="132" width="75" height="76"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="Yx5-o6-gvB">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                                                <color key="value" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="mainSpecOffAction:" target="-2" id="wYM-u0-I13"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
-                                            <font key="titleFont" metaFont="message" size="11"/>
                                         </box>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A3s-Es-5Rp">
                                             <rect key="frame" x="904" y="100" width="539" height="37"/>
@@ -1078,7 +1076,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" ambiguous="YES" id="CcP-Rm-WGU">
                                                 <rect key="frame" x="1" y="0.0" width="405" height="282"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="AJ2-cn-67M" id="kBf-96-6fY">
                                                         <rect key="frame" x="0.0" y="0.0" width="405" height="259"/>
@@ -1177,7 +1175,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" ambiguous="YES" id="E24-RG-mM8">
                                                 <rect key="frame" x="1" y="0.0" width="497" height="230"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="hUT-ir-kfb" id="VQ0-Pu-OqC">
                                                         <rect key="frame" x="0.0" y="0.0" width="497" height="207"/>
@@ -1427,7 +1425,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" ambiguous="YES" id="vjs-7f-7c9">
                                                 <rect key="frame" x="1" y="0.0" width="483" height="230"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="cAM-5F-bzv" id="0eC-dY-za8">
                                                         <rect key="frame" x="0.0" y="0.0" width="483" height="205"/>
@@ -1552,7 +1550,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bEm-05-QPL">
                                             <rect key="frame" x="913" y="505" width="149" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Volt Meter Scale Factor:" id="UQK-fm-uea">
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="MS Divider Scale Factor" id="UQK-fm-uea">
                                                 <font key="font" usesAppearanceFont="YES"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
