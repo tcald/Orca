@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15702" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="101100" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -86,7 +86,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="142" y="159" width="1545" height="555"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1025"/>
             <value key="minSize" type="size" width="1103" height="555"/>
             <value key="maxSize" type="size" width="1103" height="555"/>
             <view key="contentView" id="6">
@@ -182,7 +182,7 @@
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Basic Ops" identifier="" id="RRi-nc-eAG">
-                                <view key="view" ambiguous="YES" id="iRU-wd-EU8">
+                                <view key="view" id="iRU-wd-EU8">
                                     <rect key="frame" x="10" y="33" width="1541" height="525"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -190,7 +190,7 @@
                                             <rect key="frame" x="378" y="505" width="139" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" title="Retarding Potential:" id="M9p-UP-011">
-                                                <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -199,7 +199,7 @@
                                             <rect key="frame" x="551" y="505" width="159" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" title="Post-Regulation Status:" id="jz2-mQ-TFt">
-                                                <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -208,7 +208,7 @@
                                             <rect key="frame" x="795" y="505" width="178" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" title="Main Spectrometer Status:" id="QL4-mh-NJg">
-                                                <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -217,7 +217,7 @@
                                             <rect key="frame" x="187" y="505" width="145" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" title="IP Connection Status:" id="VLR-zu-pEM">
-                                                <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -226,7 +226,7 @@
                                             <rect key="frame" x="378" y="483" width="139" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="0 V" id="Y21-sA-BaN">
-                                                <font key="font" size="13" name=".SFNSText"/>
+                                                <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -235,7 +235,7 @@
                                             <rect key="frame" x="551" y="483" width="159" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="OFF" id="lUc-qu-cY8">
-                                                <font key="font" size="13" name=".SFNSText"/>
+                                                <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -243,7 +243,7 @@
                                         <box fixedFrame="YES" boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="XiF-AK-Q6s">
                                             <rect key="frame" x="797" y="176" width="644" height="276"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <view key="contentView" ambiguous="YES" id="rLz-FP-hZJ">
+                                            <view key="contentView" id="rLz-FP-hZJ">
                                                 <rect key="frame" x="1" y="1" width="642" height="274"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -260,7 +260,7 @@
                                                         <rect key="frame" x="18" y="163" width="104" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Vessel Voltage:" id="2KT-Aa-PJG">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -269,7 +269,7 @@
                                                         <rect key="frame" x="160" y="198" width="88" height="23"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Read Back" id="Aqy-H0-4bz">
-                                                            <font key="font" size="13" name=".SFNSText-Bold"/>
+                                                            <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -278,7 +278,7 @@
                                                         <rect key="frame" x="351" y="202" width="89" height="23"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Set Values" id="frZ-wq-odX">
-                                                            <font key="font" size="13" name=".SFNSText-Bold"/>
+                                                            <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -323,7 +323,7 @@
                                                         <rect key="frame" x="36" y="126" width="86" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="South Cone:" id="QkI-aP-Wm3">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -332,7 +332,7 @@
                                                         <rect key="frame" x="6" y="85" width="116" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Wire Electrodes:" id="orX-Hn-sVW">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -341,7 +341,7 @@
                                                         <rect key="frame" x="36" y="42" width="86" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="North Cone:" id="yQr-2w-LqI">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -596,7 +596,7 @@
                                         <box fixedFrame="YES" boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="2JO-ZY-ps8">
                                             <rect key="frame" x="104" y="176" width="644" height="276"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <view key="contentView" ambiguous="YES" id="KRI-yd-Nxl">
+                                            <view key="contentView" id="KRI-yd-Nxl">
                                                 <rect key="frame" x="1" y="1" width="642" height="274"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -707,7 +707,7 @@
                                                         <rect key="frame" x="9" y="148" width="104" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Vessel Voltage:" id="0vZ-9z-ROi">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -716,7 +716,7 @@
                                                         <rect key="frame" x="160" y="187" width="88" height="23"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Read Back" id="j6m-qh-0dv">
-                                                            <font key="font" size="13" name=".SFNSText-Bold"/>
+                                                            <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -725,7 +725,7 @@
                                                         <rect key="frame" x="342" y="183" width="89" height="23"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Set Values" id="2QO-Mx-dGE">
-                                                            <font key="font" size="13" name=".SFNSText-Bold"/>
+                                                            <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -788,7 +788,7 @@
                                                         <rect key="frame" x="27" y="65" width="86" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Steep Cones:" id="4Ud-N3-3jX">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -815,7 +815,7 @@
                                                         <rect key="frame" x="27" y="109" width="86" height="17"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="IE Common:" id="49x-Q3-4hk">
-                                                            <font key="font" size="13" name=".AppleSystemUIFontEmphasized"/>
+                                                            <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -958,7 +958,7 @@
                                             <rect key="frame" x="795" y="483" width="178" height="23"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="At Setpoint" id="XXP-od-Pkp">
-                                                <font key="font" size="13" name=".SFNSText"/>
+                                                <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -1074,13 +1074,13 @@
                                         <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V3n-pB-Yg8">
                                             <rect key="frame" x="1107" y="108" width="422" height="298"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <clipView key="contentView" ambiguous="YES" id="CcP-Rm-WGU">
-                                                <rect key="frame" x="1" y="0.0" width="405" height="282"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                            <clipView key="contentView" id="CcP-Rm-WGU">
+                                                <rect key="frame" x="1" y="1" width="405" height="281"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="AJ2-cn-67M" id="kBf-96-6fY">
-                                                        <rect key="frame" x="0.0" y="0.0" width="405" height="259"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="405" height="258"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" red="0.40000000600000002" green="0.40000000600000002" blue="1" alpha="0.1034482759" colorSpace="calibratedRGB"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
@@ -1088,7 +1088,6 @@
                                                         <tableColumns>
                                                             <tableColumn identifier="index" editable="NO" width="42.87890625" minWidth="40" maxWidth="1000" id="Bje-YX-h6L">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Index">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1101,7 +1100,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="kVesselVoltageSetPt" width="128" minWidth="40" maxWidth="1000" id="Dq5-M3-2zg">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Vessel Voltage">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1114,7 +1112,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="kPostRegulationScaleFactor" width="112.51953125" minWidth="10" maxWidth="3.4028234663852886e+38" id="0Fy-FV-IZ0">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Scale Factor">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1125,9 +1122,8 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="kPowerSupplyOffset" width="109.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="klx-lP-Ldk">
+                                                            <tableColumn identifier="kPowerSupplyOffset" width="99.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="klx-lP-Ldk">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Supply Offset">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1151,7 +1147,7 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="PE0-WF-det">
-                                                <rect key="frame" x="406" y="23" width="15" height="259"/>
+                                                <rect key="frame" x="406" y="24" width="15" height="258"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <tableHeaderView key="headerView" wantsLayer="YES" id="AJ2-cn-67M">
@@ -1173,13 +1169,13 @@
                                         <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1iW-3R-8Ck">
                                             <rect key="frame" x="16" y="160" width="514" height="246"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <clipView key="contentView" ambiguous="YES" id="E24-RG-mM8">
-                                                <rect key="frame" x="1" y="0.0" width="497" height="230"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                            <clipView key="contentView" id="E24-RG-mM8">
+                                                <rect key="frame" x="1" y="1" width="497" height="229"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="hUT-ir-kfb" id="VQ0-Pu-OqC">
-                                                        <rect key="frame" x="0.0" y="0.0" width="497" height="207"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="497" height="206"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" red="1" green="0.40000000600000002" blue="0.40000000600000002" alpha="0.1034482759" colorSpace="calibratedRGB"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
@@ -1187,7 +1183,6 @@
                                                         <tableColumns>
                                                             <tableColumn identifier="index" editable="NO" width="40" minWidth="40" maxWidth="1000" id="fow-Nb-8EF">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Index">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1200,7 +1195,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="item" width="183" minWidth="40" maxWidth="1000" id="9G6-Ep-Vft">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Item">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1213,7 +1207,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="data" width="80" minWidth="10" maxWidth="3.4028234663852886e+38" id="S7R-iJ-3ux">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Data">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1226,7 +1219,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="setPoint" width="79" minWidth="10" maxWidth="3.4028234663852886e+38" id="W42-p3-65X">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Set Point">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1237,9 +1229,8 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="readBack" width="100" minWidth="10" maxWidth="3.4028234663852886e+38" id="HhG-wd-Lh1">
+                                                            <tableColumn identifier="readBack" width="91" minWidth="10" maxWidth="3.4028234663852886e+38" id="HhG-wd-Lh1">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Readback">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1263,7 +1254,7 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="UN7-jr-hk8">
-                                                <rect key="frame" x="498" y="23" width="15" height="207"/>
+                                                <rect key="frame" x="498" y="24" width="15" height="206"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <tableHeaderView key="headerView" wantsLayer="YES" id="hUT-ir-kfb">
@@ -1423,13 +1414,13 @@
                                         <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="88b-rm-Teq">
                                             <rect key="frame" x="569" y="160" width="500" height="246"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <clipView key="contentView" ambiguous="YES" id="vjs-7f-7c9">
-                                                <rect key="frame" x="1" y="0.0" width="483" height="230"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                            <clipView key="contentView" id="vjs-7f-7c9">
+                                                <rect key="frame" x="1" y="1" width="483" height="229"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="cAM-5F-bzv" id="0eC-dY-za8">
-                                                        <rect key="frame" x="0.0" y="0.0" width="483" height="205"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="483" height="204"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" red="0.40000000600000002" green="0.40000000600000002" blue="1" alpha="0.1034482759" colorSpace="calibratedRGB"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
@@ -1437,7 +1428,6 @@
                                                         <tableColumns>
                                                             <tableColumn identifier="index" editable="NO" width="42.87890625" minWidth="40" maxWidth="1000" id="meS-m0-3EA">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Index">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1450,7 +1440,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="item" editable="NO" width="215" minWidth="40" maxWidth="1000" id="ACV-VU-GTq">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Item">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </tableHeaderCell>
@@ -1463,7 +1452,6 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="data" editable="NO" width="110.51953125" minWidth="10" maxWidth="3.4028234663852886e+38" id="ghW-am-t1k">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Data">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1474,9 +1462,8 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="value" editable="NO" width="102.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="Imp-U0-Pos">
+                                                            <tableColumn identifier="value" editable="NO" width="92.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="Imp-U0-Pos">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Value">
-                                                                    <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1500,7 +1487,7 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="ueu-nF-cc2">
-                                                <rect key="frame" x="484" y="25" width="15" height="205"/>
+                                                <rect key="frame" x="484" y="26" width="15" height="204"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <tableHeaderView key="headerView" wantsLayer="YES" id="cAM-5F-bzv">
@@ -1626,7 +1613,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="1865" y="251" width="376" height="166"/>
-            <rect key="screenRect" x="1440" y="-42" width="3840" height="2137"/>
+            <rect key="screenRect" x="1680" y="0.0" width="3840" height="2135"/>
             <view key="contentView" id="LC5-Eh-AjM">
                 <rect key="frame" x="0.0" y="0.0" width="376" height="166"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1657,7 +1644,7 @@
                         <rect key="frame" x="43" y="50" width="290" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" alignment="center" title="Turn off main spectrometer voltage? Turning off the voltage during tritium operation may trip interlocks/alarms!" id="SKU-UD-eNV">
-                            <font key="font" size="16" name=".SFNSText"/>
+                            <font key="font" metaFont="system" size="16"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -1670,7 +1657,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="1865" y="251" width="376" height="166"/>
-            <rect key="screenRect" x="1440" y="-42" width="3840" height="2137"/>
+            <rect key="screenRect" x="1680" y="0.0" width="3840" height="2135"/>
             <view key="contentView" id="LQe-B0-M9F">
                 <rect key="frame" x="0.0" y="0.0" width="376" height="166"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1701,7 +1688,7 @@
                         <rect key="frame" x="43" y="51" width="290" height="95"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" alignment="center" title="Turn off post-regulation voltage? Turning off the voltage during tritium operation may trip interlocks/ alarms!" id="oht-4y-JCH">
-                            <font key="font" size="16" name=".SFNSText"/>
+                            <font key="font" metaFont="system" size="16"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -1714,7 +1701,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="1865" y="251" width="375" height="166"/>
-            <rect key="screenRect" x="1440" y="-42" width="3840" height="2137"/>
+            <rect key="screenRect" x="1680" y="0.0" width="3840" height="2135"/>
             <view key="contentView" id="W0b-Nn-f9u">
                 <rect key="frame" x="0.0" y="0.0" width="375" height="166"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1745,7 +1732,7 @@
                         <rect key="frame" x="42" y="50" width="290" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" alignment="center" title="Turn off post-regulation voltage? Turning off the voltage during tritium operation may trip interlocks/alarms!" id="6j5-jn-VU4">
-                            <font key="font" size="16" name=".SFNSText"/>
+                            <font key="font" metaFont="system" size="16"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
