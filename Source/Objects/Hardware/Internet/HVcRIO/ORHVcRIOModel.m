@@ -2024,14 +2024,14 @@ static NSString* itemsToShip[kNumToShip*2] = {
     // reset the parameters if the set point has changed while ramping
     if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue]){
         NSLog(@"ORHVcRIO: set point changed during ramping\n");
-        int nsteps = ABS(voltage-setPoint) / kHVcRIOMainSpecRampSpeed / pollTime;
+        int nsteps = ABS(voltage+setPoint) / kHVcRIOMainSpecRampSpeed / pollTime;
         [dict setValue:[NSNumber numberWithDouble:voltage] forKey:@"startVoltage"];
         [dict setValue:[NSNumber numberWithDouble:setPoint] forKey:@"setPoint"];
         [dict setValue:[NSNumber numberWithInt:nsteps] forKey:@"nsteps"];
         [dict setValue:[NSNumber numberWithInt:-1] forKey:@"stepCount"];
     }
     // if within 30 V of the setpoint, declare success and exit loop
-    if(ABS(voltage-setPoint) < 30){
+    if(ABS(voltage+setPoint) < 30){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: main spectrometer vessel voltage successfully ramped from %.2f V to %.2f V\n",
                [[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
         [dict release];
@@ -2042,7 +2042,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     }
     // increment the step counter
     [dict setValue:[NSNumber numberWithInt:([[dict objectForKey:@"stepCount"] intValue]+1)] forKey:@"stepCount"];
-    NSLog(@"ORHVcRIO: updateVesselVoltage setp %d of %d\n", [[dict objectForKey:@"stepCount"] intValue], [[dict objectForKey:@"nsteps"] intValue]);
+    NSLog(@"ORHVcRIO: updateVesselVoltage step %d of %d\n", [[dict objectForKey:@"stepCount"] intValue], [[dict objectForKey:@"nsteps"] intValue]);
     // if nsteps+3 steps have passed, possibly a timeout, try resending setpoint
     if([[dict objectForKey:@"stepCount"] intValue] < 2*([[dict objectForKey:@"nsteps"] intValue]+3)){
         if([[dict objectForKey:@"stepCount"] intValue] == [[dict objectForKey:@"nsteps"] intValue]+3){
@@ -2247,6 +2247,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
 
 - (void) updateScaleFactor:(NSMutableDictionary*)dict
 {
+    NSLog(@"updateScaleFactor:\n\t%@\n", dict);
     // if the main spectrometer is ramping, check again after a new poll
     if(mainSpecRamping){
         [self performSelector:@selector(updateScaleFactor:) withObject:dict afterDelay:pollTime];
@@ -2260,6 +2261,8 @@ static NSString* itemsToShip[kNumToShip*2] = {
     // get a current sample of the scale factor and add to the sum
     double sf = [self readVesselVoltage] / [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue];
     sf *= [defSF doubleValue];
+    NSLog(@"readVesselVoltage: %e mainSpecSupplyVoltageSetPoint: %e scaleFactor:%e\n",
+          [self readVesselVoltage], [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue], sf);
     sumSF = [NSNumber numberWithDouble:[sumSF doubleValue] + sf];
     [dict setValue:[NSNumber numberWithDouble:[sumSF doubleValue]] forKey:@"sumSF"];
     [dict setValue:[NSNumber numberWithInt:[stepCount intValue]] forKey:@"stepCount"];
@@ -2280,7 +2283,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
         double setPoint = [(NSNumber*)[dict objectForKey:@"setPoint"] doubleValue];
         double offset   = [(NSNumber*)[dict objectForKey:@"offset"]   doubleValue];
         [self setPostRegulation:setPoint scaleFactor:sf supplyOffset:offset];
-        [self setVesselVoltageWithPostReg:(setPoint-offset) scaleFactor:sf supplyOffset:offset];
+        [self setVesselVoltageWithPostReg:setPoint scaleFactor:sf supplyOffset:offset];
     }
 }
 
@@ -2340,24 +2343,33 @@ static NSString* itemsToShip[kNumToShip*2] = {
 
 - (void) setVesselVoltageWithPostReg:(double)voltage scaleFactor:(double)sf supplyOffset:(int)offset
 {
+    NSLog(@"setVesselVoltageWithPostReg:%e scaleFactor:%e supplyOffset:%d\n", voltage, sf, offset);
     voltage = MIN(ABS(voltage), kHVcRIOMainSpecMaxVoltage);
     NSLog([NSString stringWithFormat:@"ORHVcRIO: setting vessel voltage with post regulation to %.2f V\n",voltage]);
     sf = [self scaleFactorCheck:sf];
     double k35 = [self readK35Voltage];
-    if(k35 == 0.0 && [self readMainSpecVesselVoltage] > 50.0){
+    NSLog(@"\tk35: %e mainSpecVesselVoltage:%e\n", [self readMainSpecVesselVoltage]);
+    if(k35 == 0.0 && [self readMainSpecVesselVoltage] > 50.0){ // fixme - check on sign here
         NSLog(@"ORHVcRIO: incorrect K35 sensor reading! Aborting set voltage with post-regulation\n");
         return;
     }
     double vesselVoltage = [self readVesselVoltage];
     double mainSpecVoltage = voltage + offset;
+    NSLog(@"\tvesselVoltage:%e mainSpecVoltage:%e scaleFactor:%e\n", vesselVoltage, mainSpecVoltage, sf);
     if(voltage > vesselVoltage){
+        NSLog(@"\tsetPostRegVoltage:%e\n", voltage/sf);
         [self setPostRegVoltage:(voltage/sf)];
-        if(ABS([self readMainSpecVesselSetVoltage] - mainSpecVoltage) > 1)
+        if(ABS([self readMainSpecVesselSetVoltage] - mainSpecVoltage) > 1){
+            NSLog(@"\tsetMainSpecSupplyVoltage:%e\n", mainSpecVoltage);
             [self setMainSpecSupplyVoltage:mainSpecVoltage];
+        }
     }
     else if(voltage < vesselVoltage){
-        if(ABS([self readMainSpecVesselSetVoltage] - mainSpecVoltage) > 1)
+        if(ABS([self readMainSpecVesselSetVoltage] - mainSpecVoltage) > 1){
+            NSLog(@"\tsetMainSpecSupplyVoltage:mainSpecVoltage:%e\n", mainSpecVoltage);
             [self setMainSpecSupplyVoltage:mainSpecVoltage];
+        }
+        NSLog(@"\tsetPostRegVoltage:%e\n", voltage/sf);
         [self setPostRegVoltage:(voltage/sf)];
     }
     if(voltage == k35) NSLog(@"ORHVcRIO: voltage setpoint unchanged\n");
@@ -2376,6 +2388,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     double setPoint = [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue];
     double offset = [[dict objectForKey:@"offset"] doubleValue];
     double voltage = [self readVesselVoltage];
+    NSLog(@"\tsetPoint:%e offset:%e voltage:%e\n", setPoint, offset, voltage);
     // check to see if the set point has been changed since starting the post regulation
     if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue] + offset){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: set point changed during ramping %f %f \n",setPoint,[[dict objectForKey:@"setPoint"] doubleValue]]);
@@ -2387,7 +2400,9 @@ static NSString* itemsToShip[kNumToShip*2] = {
     }
     // if the voltage is the required precision from the step point for 2 steps, success
     [dict setValue:[dict objectForKey:@"diff0"] forKey:@"diff1"];
-    [dict setValue:[NSNumber numberWithDouble:(voltage-setPoint)] forKey:@"diff0"];
+    [dict setValue:[NSNumber numberWithDouble:(voltage+offset-setPoint)] forKey:@"diff0"];
+    NSLog(@"\tdiff0: %e diff1: %e\n",
+          [[dict objectForKey:@"diff0"] doubleValue], [[dict objectForKey:@"diff1"] doubleValue]);
     if(ABS([[dict objectForKey:@"diff0"] doubleValue]) < [[dict objectForKey:@"precision"] doubleValue] &&
        ABS([[dict objectForKey:@"diff1"] doubleValue]) < [[dict objectForKey:@"precision"] doubleValue]){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: main spectrometer vessel voltage successfully ramped from %.2f V to %.2f V\n",
@@ -2399,14 +2414,13 @@ static NSString* itemsToShip[kNumToShip*2] = {
     }
     int stepCount = [[dict objectForKey:@"stepCount"] intValue] + 1;
     [dict setValue:[NSNumber numberWithInt:stepCount] forKey:@"stepCount"];
-    NSLog(@"ORHVcRIO: updateVesselVoltageWithPostReg step %d\n",
-          [[dict objectForKey:@"stepCount"] intValue]);
+    NSLog(@"ORHVcRIO: updateVesselVoltageWithPostReg step %d\n", [[dict objectForKey:@"stepCount"] intValue]);
     // at 10 and 20 steps, estimate a new scale factor, at 30 consider it a failure
     if(stepCount % 10 == 0 && stepCount > 0){
         if(stepCount < 30){
             NSLog(@"ORHVcRIO: starting estimation of new post-regulation scale factor\n");
             double sf = [[dict objectForKey:@"scaleFactor"] doubleValue];
-            [self estimateScaleFactorPostReg:setPoint withDefault:sf supplyOffset:offset];
+            [self estimateScaleFactorPostReg:setPoint-offset withDefault:sf supplyOffset:offset];
         }
         else{
             NSLog(@"ORHVcRIO: failed to ramp main spectrometer voltage with post-regulation\n");
@@ -2422,6 +2436,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
 
 - (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config
 {
+    NSLog(@"setVesselVoltageWithPostReg:%e precision:%e config:%d\n", voltage, precision, config);
     double sf =  [self getPostRegulationScaleFactor:voltage];
     // need to take care of the case where the scale factor isn't in the post-regulation table
     int offset = [self getSupplyOffset:voltage forConfig:config];
@@ -2438,6 +2453,8 @@ static NSString* itemsToShip[kNumToShip*2] = {
                                   [NSNumber numberWithDouble:(voltage-[self readVesselVoltage])], @"diff0",
                                   [NSNumber numberWithDouble:(2*precision)], @"diff1",
                                   [NSNumber numberWithInt:-1],               @"stepCount", nil] retain];
+    NSLog(@"updateVesselVoltageWithPostReg:\n");
+    NSLog(@"\t%@\n", dict);
     mainSpecPostRegRamping = YES;
     [self updateVesselVoltageWithPostReg:dict];
 }
