@@ -2259,7 +2259,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     NSNumber* stepCount = [dict objectForKey:@"stepCount"];
     stepCount = [NSNumber numberWithInt:[stepCount intValue]+1];
     // get a current sample of the scale factor and add to the sum
-    double sf = [self readVesselVoltage] / [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue];
+    double sf = [self readVesselVoltage] / ([[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue] - [[dict objectForKey:@"offset"] doubleValue]);
     sf *= [defSF doubleValue];
     NSLog(@"readVesselVoltage: %e mainSpecSupplyVoltageSetPoint: %e scaleFactor:%e\n",
           [self readVesselVoltage], [[self setPointAtIndex:[self spIndex:@"mainSpecSupplyVoltage"]] doubleValue], sf);
