@@ -2430,7 +2430,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
         NSLog([NSString stringWithFormat:@"ORHVcRIO: setting scale factor to estimated value %.2f\n",sf]);
         double setPoint = [(NSNumber*)[dict objectForKey:@"setPoint"] doubleValue];
         double offset   = [(NSNumber*)[dict objectForKey:@"offset"]   doubleValue];
-        [dict release];
+        //[dict release];
         [self setPostRegulation:setPoint scaleFactor:sf supplyOffset:offset];
         [self setVesselVoltageWithPostReg:setPoint scaleFactor:sf supplyOffset:offset];
     }
@@ -2549,7 +2549,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     if(ABS([[dict objectForKey:@"diff0"] doubleValue]) < [[dict objectForKey:@"precision"] doubleValue] &&
        ABS([[dict objectForKey:@"diff1"] doubleValue]) < [[dict objectForKey:@"precision"] doubleValue]){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: main spectrometer vessel voltage successfully ramped from %.2f V to %.2f V\n",
-               [[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
+               -[[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
         mainSpecPostRegRamping = NO;
         if(postRegAPREnabled){
             [dict setValue:[NSNumber numberWithInt:-1] forKey:@"stepCount"];
@@ -2570,7 +2570,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
         if(stepCount < 30){
             NSLog(@"ORHVcRIO: starting estimation of new post-regulation scale factor\n");
             double sf = [[dict objectForKey:@"scaleFactor"] doubleValue];
-            [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecPostRegAPRRamping
+            [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecPostRegRamping
                                                                 object:self];
             [self estimateScaleFactorPostReg:setPoint-offset withDefault:sf supplyOffset:offset];
         }
@@ -2632,6 +2632,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
         mainSpecPostRegAPRRamping = NO;
         mainSpecRampSuccess = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRampFailure object:self];
+        return;
     }
     else{
         [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecPostRegAPRRamping object:self];
