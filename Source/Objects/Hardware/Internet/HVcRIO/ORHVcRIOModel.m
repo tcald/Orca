@@ -41,7 +41,7 @@ NSString* ORHVcRIOModelUpdatePostRegulationTable    = @"ORHVcRIOModelUpdatePostR
 NSString* ORHVcRIOModelPollTimeChanged              = @"ORHVcRIOModelPollTimeChanged";
 NSString* ORHVcRIOModelMainSpecRamping              = @"ORHVcRIOModelMainSpecRamping";
 NSString* ORHVcRIOModelMainSpecPostRegRamping       = @"ORHVcRIOModelMainSpecPostRegRamping";
-NSString* ORHVcRIOModelMainSpecPostRegAPRRamping    = @"ORHVcRIOModelMainSpecPostRegRamping";
+NSString* ORHVcRIOModelMainSpecPostRegAPRRamping    = @"ORHVcRIOModelMainSpecPostRegAPRRamping";
 NSString* ORHVcRIOModelMainSpecRampSuccess          = @"ORHVcRIOModelMainSpecRampSuccess";
 NSString* ORHVcRIOModelMainSpecRampFailure          = @"ORHVcRIOModelMainSpecRampFailure";
 NSString* ORHVcRIOModelEstimatingScaleFactor        = @"ORHVcRIOModelEstimatingScaleFactor";
@@ -2107,7 +2107,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     // if within 30 V of the setpoint, declare success and exit loop
     if(ABS(voltage+setPoint) < 30){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: main spectrometer vessel voltage successfully ramped from %.2f V to %.2f V\n",
-               [[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
+               -[[dict objectForKey:@"startVoltage"] doubleValue], [[dict objectForKey:@"setPoint"] doubleValue]]);
         [dict release];
         mainSpecRamping = NO;
         mainSpecRampSuccess = YES;
@@ -2246,6 +2246,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     }
     NSLog([NSString stringWithFormat:@"ORHVcRIO: setting post-reg PID voltage to %.2f V\n", voltage]);
     [self setSetPoint:[self spIndex:@"postRegulationPIDVoltage"] withValue:voltage];
+    [self writeSetpoints];
     return YES;
 }
 
@@ -2604,7 +2605,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     }
     double retardingPotential = [[dict objectForKey:@"setPoint"] doubleValue] + ABS([self readIeCommonVoltage]);
     double valueAPR = retardingPotential / ABS([self vmScaleFactor]);
-    NSLog(@"ORHVcRIO: activating APR with set value of %.4f", valueAPR);
+    NSLog(@"ORHVcRIO: activating APR with set value of %.4f\n", valueAPR);
     if([[dict objectForKey:@"stepCount"] intValue] == -1){
         if(![self setPostRegPIDVoltage:valueAPR]){
             [dict release];
