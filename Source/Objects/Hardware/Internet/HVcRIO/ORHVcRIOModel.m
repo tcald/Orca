@@ -2537,7 +2537,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     double offset = [[dict objectForKey:@"offset"] doubleValue];
     double voltage = [self readVesselVoltage];
     // check to see if the set point has been changed since starting the post regulation
-    if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue] + offset){
+    if(setPoint != [[dict objectForKey:@"setPoint"] doubleValue]/* + offset*/){
         NSLog([NSString stringWithFormat:@"ORHVcRIO: set point changed during ramping %f %f \n",setPoint,[[dict objectForKey:@"setPoint"] doubleValue]]);
         [dict setValue:[NSNumber numberWithDouble:voltage]  forKey:@"startVoltage"];
         [dict setValue:[NSNumber numberWithDouble:setPoint] forKey:@"setPoint"];
