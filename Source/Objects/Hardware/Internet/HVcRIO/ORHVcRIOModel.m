@@ -2609,13 +2609,14 @@ static NSString* itemsToShip[kNumToShip*2] = {
     NSLog(@"ORHVcRIO: activating APR with set value of %.4f\n", valueAPR);
     if([[dict objectForKey:@"stepCount"] intValue] == -1){
         if(![self setPostRegPIDVoltage:valueAPR]){
-            [self setPostRegPIDStatus:YES];
             [dict release];
             mainSpecPostRegAPRRamping = NO;
             mainSpecRampSuccess = NO;
             [[NSNotificationCenter defaultCenter] postNotificationName:ORHVcRIOModelMainSpecRampFailure object:self];
             return;
         }
+        else [self setPostRegPIDStatus:YES];
+
     }
     int stepCount = [[dict objectForKey:@"stepCount"] intValue] + 1;
     [dict setValue:[NSNumber numberWithInt:stepCount] forKey:@"stepCount"];
