@@ -2605,6 +2605,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
         return;
     }
     double retardingPotential = [[dict objectForKey:@"setPoint"] doubleValue] + ABS([self readIeCommonVoltage]);
+    [[dict objectForKey:@"offset"] doubleValue];
     double valueAPR = retardingPotential / ABS([self vmScaleFactor]);
     NSLog(@"ORHVcRIO: activating APR with set value of %.4f\n", valueAPR);
     if([[dict objectForKey:@"stepCount"] intValue] == -1){
