@@ -2609,6 +2609,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     NSLog(@"ORHVcRIO: activating APR with set value of %.4f\n", valueAPR);
     if([[dict objectForKey:@"stepCount"] intValue] == -1){
         if(![self setPostRegPIDVoltage:valueAPR]){
+            [self setPostRegPIDStatus:YES];
             [dict release];
             mainSpecPostRegAPRRamping = NO;
             mainSpecRampSuccess = NO;
@@ -2645,6 +2646,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
 - (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config
 {
     breakRampLoops = NO;
+    if(postRegAPREnabled) [self setPostRegPIDStatus:NO];
     double sf =  [self getPostRegulationScaleFactor:voltage];
     // need to take care of the case where the scale factor isn't in the post-regulation table
     int offset = [self getSupplyOffset:voltage forConfig:config];
@@ -2670,6 +2672,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
 - (void) setVesselVoltageWithoutPostReg:(double)voltage
 {
     breakRampLoops = NO;
+    if(postRegAPREnabled) [self setPostRegPIDStatus:NO];
     [self turnOffPostReg];
     [self setMainSpecSupplyVoltage:voltage];
 }
