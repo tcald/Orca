@@ -27,7 +27,6 @@
 #define kPostRegulationScaleFactor     @"kPostRegulationScaleFactor"
 #define kPowerSupplyOffset             @"kPowerSupplyOffset"
 #define kHVcRIORecordSize 9
-#define kHVcRIOK35ScaleFactor     -1972.45
 #define kHVcRIOMainSpecMaxVoltage 33000.0
 #define kHVcRIOMainSpecRampSpeed    100.0
 #define kHVcRIOIECommonMaxVoltage   500.0
@@ -38,6 +37,8 @@
 #define kHVcRIOPreSpecMaxVoltage  35000.0
 #define kHVcRIOPostRegPrecisionMin    0.25
 #define kHVcRIOPostRegPrecisionMax    1.0
+#define kHVcRIOPostRegAPRPrecisionMin 0.02
+#define kHVcRIOPostRegPIDMaxVoltage  20.0
 
 @interface ORHVcRIOModel : OrcaObject <ORAdcProcessing>
 {
@@ -68,18 +69,25 @@
         BOOL                showFormattedDates;
         int                 pollTime;
         uint32_t            dataId;
+        BOOL                breakRampLoops;
         BOOL                mainSpecRamping;
         BOOL                mainSpecRampSuccess;
         BOOL                mainSpecPostRegRamping;
+        BOOL                mainSpecPostRegAPRRamping;
         BOOL                scaleFactorEstimating;
         double              postRegPrecision;
+        double              postRegAPRPrecision;
+        double              postRegAPRTimeout;
         double              postRegDefSF;
         int                 postRegConfig;
+        BOOL                postRegEnabled;
+        BOOL                postRegAPREnabled;
+        bool                ieSAPmode;
         double              vmScaleFactor;
 }
 
 #pragma mark ***Initialization
-//- (id) init;
+- (id) init;
 - (void) dealloc;
 - (NSString*) commonScriptMethods;
 
@@ -124,7 +132,7 @@
 - (NSInteger) numSetPoints;
 - (void) createMeasuredValueArray;
 - (NSUInteger) numMeasuredValues;
-- (BOOL) expertPCControlOnly ;
+- (BOOL) expertPCControlOnly;
 - (BOOL) zeusHasControl;
 - (BOOL) orcaHasControl;
 
@@ -178,9 +186,16 @@
 - (double) readPreSpecSouthConeVoltage;
 - (double) readPreSpecNorthConeVoltage;
 - (double) readPreSpecWireElectrodeVoltage;
+- (double) readPostRegPIDVoltage;
+- (BOOL)   readPostRegPIDStatus;
 - (double) postRegPrecision;
+- (double) postRegAPRPrecision;
+- (double) postRegAPRTimeout;
 - (double) postRegDefSF;
 - (int) postRegConfig;
+- (BOOL) postRegEnabled;
+- (BOOL) postRegAPREnabled;
+- (BOOL) ieSAPmode;
 
 - (void) updateVesselVoltage:(NSMutableDictionary*)dict;
 - (void) setMainSpecSupplyVoltage:(double)value;
@@ -192,9 +207,17 @@
 - (void) setPreSpecSouthConeVoltage:(double)value;
 - (void) setPreSpecNorthConeVoltage:(double)value;
 - (void) setPreSpecWireElectrodeVoltage:(double)value;
+- (BOOL) setPostRegPIDVoltage:(double)value;
+- (void) setPostRegPIDStatus:(BOOL)status;
 - (void) setPostRegPrecision:(double)value;
+- (void) setPostRegAPRPrecision:(double)value;
+- (void) setPostRegAPRTimeout:(double)value;
 - (void) setPostRegDefSF:(double)value;
 - (void) setPostRegConfig:(int)value;
+- (void) setPostRegEnabled:(BOOL)enable;
+- (void) setPostRegAPREnabled:(BOOL)enable;
+- (void) setIeSAPmode:(BOOL)enable;
+- (void) setBreakRampLoops:(NSNumber*)value;
 
 - (void) turnOffPostReg;
 - (void) turnOffHV;
@@ -206,6 +229,8 @@
 - (double) getPostRegulationScaleFactor:(double)voltage;
 - (void) estimateScaleFactorPostReg:(double)voltage withDefault:(double)defSF supplyOffset:(int)offset;
 - (void) setPostRegulation:(double)voltage scaleFactor:(double)sf supplyOffset:(double)offset;
+- (void) updateVesselVoltageWithPostReg:(NSDictionary*)dict;
+- (void) updateVesselVoltageWithPostRegAPR:(NSDictionary*)dict;
 - (void) setVesselVoltageWithPostReg:(double)voltage scaleFactor:(double)sf supplyOffset:(int)offset;
 - (void) setVesselVoltageWithPostReg:(double)voltage precision:(double)precision config:(int)config;
 - (void) setVesselVoltageWithoutPostReg:(double)voltage;
@@ -251,12 +276,19 @@ extern NSString* ORHVcRIOModelPostRegulationPointRemoved;
 extern NSString* ORHVcRIOModelUpdatePostRegulationTable;
 extern NSString* ORHVcRIOModelPollTimeChanged;
 extern NSString* ORHVcRIOModelMainSpecRamping;
+extern NSString* ORHVcRIOModelMainSpecPostRegRamping;
+extern NSString* ORHVcRIOModelMainSpecPostRegAPRRamping;
 extern NSString* ORHVcRIOModelMainSpecRampSuccess;
 extern NSString* ORHVcRIOModelMainSpecRampFailure;
 extern NSString* ORHVcRIOModelEstimatingScaleFactor;
 extern NSString* ORHVcRIOModelPostRegPrecisionChanged;
+extern NSString* ORHVcRIOModelPostRegAPRPrecisionChanged;
+extern NSString* ORHVcRIOModelPostRegAPRTimeoutChanged;
 extern NSString* ORHVcRIOModelPostRegConfigChanged;
 extern NSString* ORHVcRIOModelPostRegDefSFChanged;
+extern NSString* ORHVcRIOModelPostRegEnabledChanged;
+extern NSString* ORHVcRIOModelPostRegAPREnabledChanged;
+extern NSString* ORHVcRIOModelIESAPModeChanged;
 extern NSString* ORHVcRIOModelVMScaleFactorChanged;
 
 @interface PostRegulationPoint : NSObject

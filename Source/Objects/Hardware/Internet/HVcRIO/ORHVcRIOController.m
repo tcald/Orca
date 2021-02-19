@@ -150,6 +150,16 @@
                        object : nil];
     
     [notifyCenter addObserver : self
+                     selector : @selector(mainSpecPostRegRamping:)
+                         name : ORHVcRIOModelMainSpecPostRegRamping
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(mainSpecPostRegAPRRamping:)
+                         name : ORHVcRIOModelMainSpecPostRegAPRRamping
+                       object : nil];
+    
+    [notifyCenter addObserver : self
                      selector : @selector(mainSpecRampSuccess:)
                          name : ORHVcRIOModelMainSpecRampSuccess
                        object : nil];
@@ -170,6 +180,26 @@
                        object : nil];
     
     [notifyCenter addObserver : self
+                     selector : @selector(postRegEnabledChanged:)
+                         name : ORHVcRIOModelPostRegEnabledChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(postRegAPREnabledChanged:)
+                         name : ORHVcRIOModelPostRegAPREnabledChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(postRegAPRPrecisionChanged:)
+                         name : ORHVcRIOModelPostRegAPRPrecisionChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(postRegAPRTimeoutChanged:)
+                         name : ORHVcRIOModelPostRegAPRTimeoutChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
                      selector : @selector(postRegConfigChanged:)
                          name : ORHVcRIOModelPostRegConfigChanged
                        object : nil];
@@ -177,6 +207,11 @@
     [notifyCenter addObserver : self
                      selector : @selector(postRegDefSFChanged:)
                          name : ORHVcRIOModelPostRegDefSFChanged
+                       object : nil];
+    
+    [notifyCenter addObserver : self
+                     selector : @selector(ieSAPModeChanged:)
+                         name : ORHVcRIOModelIESAPModeChanged
                        object : nil];
     
     [notifyCenter addObserver : self
@@ -213,8 +248,13 @@
     [self postRegulationFileChanged:nil];
     [self pollTimeChanged:nil];
     [self postRegPrecisionChanged:nil];
+    [self postRegEnabledChanged:nil];
+    [self postRegAPREnabledChanged:nil];
+    [self postRegAPRPrecisionChanged:nil];
+    [self postRegAPRTimeoutChanged:nil];
     [self postRegDefSFChanged:nil];
     [self postRegConfigChanged:nil];
+    [self ieSAPModeChanged:nil];
     [self vmScaleFactorChanged:nil];
 }
 
@@ -313,9 +353,14 @@
     [orcaHasControlField setStringValue:     [model orcaHasControl]      ? @"ORCA has control":@""];
 
     [retardingPotentialTextField setStringValue:[NSString stringWithFormat:@"%.2f",[model readK35Voltage]]];
-    [mainSpecVoltageTextField setStringValue:[NSString stringWithFormat:@"%f",-1*[model readMainSpecVesselVoltage]]];
+    double vesselVoltage = -1 * [model readMainSpecVesselVoltage];
+    double ieCommonVoltage = -1 * [model readIeCommonVoltage];
+    double offset = [model readPostRegSetVoltage];
+    offset *= [model getPostRegulationScaleFactor:vesselVoltage];
+    [mainSpecVoltageTextField setStringValue:[NSString stringWithFormat:@"%f",vesselVoltage]];
+    [mainSpecPostRegVoltageTextField setStringValue:[NSString stringWithFormat:@"%f",vesselVoltage+offset]];
     [ieCommonTextField        setStringValue:[NSString stringWithFormat:@"%f",-1*[model readIeCommonVoltage]]];
-    [westConeTextField        setStringValue:[NSString stringWithFormat:@"%f",-1*[model readSteepConesWestVoltage]]];
+    [westConeTextField        setStringValue:[NSString stringWithFormat:@"%f",ieCommonVoltage]];
     [eastConeTextField        setStringValue:[NSString stringWithFormat:@"%f",-1*[model readSteepConesEastVoltage]]];
     [preSpecVoltageTextField  setStringValue:[NSString stringWithFormat:@"%f",-1*[model readPreSpecVesselVoltage]]];
     [southConeTextField       setStringValue:[NSString stringWithFormat:@"%f",-1*[model readPreSpecSouthConeVoltage]]];
@@ -343,6 +388,18 @@
     [mainSpecStatusTextField setTextColor:[NSColor orangeColor]];
 }
 
+- (void) mainSpecPostRegRamping:(NSNotification*)aNote
+{
+    [mainSpecStatusTextField setStringValue:@"Post-Regulation Adjustment"];
+    [mainSpecStatusTextField setTextColor:[NSColor orangeColor]];
+}
+
+- (void) mainSpecPostRegAPRRamping:(NSNotification*)aNote
+{
+    [mainSpecStatusTextField setStringValue:@"APR Fine Tuning"];
+    [mainSpecStatusTextField setTextColor:[NSColor orangeColor]];
+}
+
 - (void) mainSpecRampSuccess:(NSNotification*)aNote
 {
     [mainSpecStatusTextField setStringValue:@"At Set Point"];
@@ -366,6 +423,26 @@
     [postRegPrecisionTextField setStringValue:[NSString stringWithFormat:@"%.2f", [model postRegPrecision]]];
 }
 
+- (void) postRegEnabledChanged:(NSNotification*)aNote
+{
+    [enablePostRegButton setState:[model postRegEnabled]];
+}
+
+- (void) postRegAPREnabledChanged:(NSNotification*)aNote
+{
+    [enablePostRegAPRButton setState:[model postRegAPREnabled]];
+}
+
+- (void) postRegAPRPrecisionChanged:(NSNotification*)aNote
+{
+    [postRegAPRPrecisionTextField setStringValue:[NSString stringWithFormat:@"%.3f", [model postRegAPRPrecision]]];
+}
+
+- (void) postRegAPRTimeoutChanged:(NSNotification*)aNote
+{
+    [postRegAPRTimeoutTextField setStringValue:[NSString stringWithFormat:@"%.1f", [model postRegAPRTimeout]]];
+}
+
 - (void) postRegDefSFChanged:(NSNotification *)aNote
 {
     [postRegDefSFTextField setStringValue:[NSString stringWithFormat:@"%.2f", [model postRegDefSF]]];
@@ -379,6 +456,11 @@
 - (void) vmScaleFactorChanged:(NSNotification*)aNote
 {
     [vmScaleFactorTextField setStringValue:[NSString stringWithFormat:@"%.3f", [model vmScaleFactor]]];
+}
+
+- (void) ieSAPModeChanged:(NSNotification*)aNote
+{
+    [sapModeButton setState:[model ieSAPmode]];
 }
 
 - (void) checkGlobalSecurity
@@ -469,11 +551,15 @@
     [setNorthConeButton                 setEnabled:!locked];
     [setWireElectrodeButton             setEnabled:!locked];
     [enablePostRegButton                setEnabled:!locked];
+    [enablePostRegAPRButton             setEnabled:!locked];
     [mainSpecOffButton                  setEnabled:!locked];
     [postRegOffButton                   setEnabled:!locked];
     [preSpecOffButton                   setEnabled:!locked];
     [postRegPrecisionTextField          setEnabled:!locked];
+    [postRegAPRPrecisionTextField       setEnabled:!locked];
+    [postRegAPRTimeoutTextField         setEnabled:!locked];
     [postRegDefSFTextField              setEnabled:!locked];
+    [sapModeButton                      setEnabled:!locked];
     [vmScaleFactorTextField             setEnabled:!locked];
     [currentSetPointButton              setEnabled:!locked];
 }
@@ -518,7 +604,10 @@
 - (BOOL) checkButtonStatus:(NSButton*)button fromTextField:(NSTextField*)text withString:(NSString*)str
 {
     double setPoint = [[model setPointAtIndex:[model spIndex:str]] doubleValue];
-    if([str isEqualToString:@"mainSpecSupplyOffset"]) setPoint -= [model getSupplyOffset:setPoint forConfig:0];
+    if([str isEqualToString:@"mainSpecSupplyVoltage"]){
+        if([model postRegEnabled])
+            setPoint += [model readPostRegSetVoltage] * [model getPostRegulationScaleFactor:setPoint];
+    }
     double value = [text doubleValue];
     if(setPoint != value){
         [self changeButton:button withColor:[NSColor orangeColor]];
@@ -547,12 +636,20 @@
 {
     [self checkButtonStatus:setMainSpecVoltageButton fromTextField:sender
                  withString:@"mainSpecSupplyVoltage" withMin:0.0 andMax:kHVcRIOMainSpecMaxVoltage];
+    double v = [[sender stringValue] doubleValue];
+    double sf = [model getPostRegulationScaleFactor:v];
+    v += [[setIeCommonTextField stringValue] doubleValue] + [model readPostRegSetVoltage] * sf;
+    [targetPotentialTextField setStringValue:[NSString stringWithFormat:@"%.2f V", v]];
 }
 
 - (IBAction) setIeCommonTextAction:(id)sender
 {
     [self checkButtonStatus:setIECommonButton fromTextField:sender
                  withString:@"ieCommonVoltage" withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
+    double v = [[setMainSpecVoltageTextField stringValue] doubleValue];
+    double sf = [model getPostRegulationScaleFactor:v];
+    v += [[sender stringValue] doubleValue] + [model readPostRegSetVoltage] * sf;
+    [targetPotentialTextField setStringValue:[NSString stringWithFormat:@"%.2f V", v]];
 }
 
 - (IBAction) setEwSteepConeTextAction:(id)sender
@@ -592,9 +689,15 @@
 {
     [[setMainSpecVoltageTextField window] makeFirstResponder:nil];
     double voltage = [self checkTFVoltage:setMainSpecVoltageTextField withMin:0.0 andMax:kHVcRIOMainSpecMaxVoltage];
-    if([enablePostRegButton state]) [model setVesselVoltageWithPostReg:voltage
-                                                             precision:[model postRegPrecision]
-                                                                config:[model postRegConfig]];
+    if([model postRegEnabled]){
+        if(voltage < 5000.0){
+            [self endEditing];
+            [[self window] beginSheet:confirmPostRegVoltagePanel completionHandler:nil];
+        }
+        else [model setVesselVoltageWithPostReg:voltage
+                                      precision:[model postRegPrecision]
+                                         config:[model postRegConfig]];
+    }
     else [model setVesselVoltageWithoutPostReg:voltage];
 }
 
@@ -638,6 +741,11 @@
     [[setWireElectrodeTextField window] makeFirstResponder:nil];
     double voltage = [self checkTFVoltage:setWireElectrodeTextField withMin:0.0 andMax:kHVcRIOIECommonMaxVoltage];
     [model setPreSpecWireElectrodeVoltage:voltage];
+}
+
+- (IBAction) mainSpecStopRampAction:(id)sender
+{
+    [model setBreakRampLoops:[NSNumber numberWithBool:YES]];
 }
 
 - (IBAction) mainSpecOffAction:(id)sender
@@ -698,15 +806,106 @@
     [NSApp endSheet:confirmPreSpecOffPanel];
 }
 
+- (IBAction) confirmPostRegVoltageAction:(id)sender
+{
+    [model setVesselVoltageWithPostReg:[[setMainSpecVoltageTextField stringValue] doubleValue]
+                             precision:[model postRegPrecision]
+                                config:[model postRegConfig]];
+    [confirmPostRegVoltagePanel orderOut:nil];
+    [NSApp endSheet:confirmPostRegVoltagePanel];
+}
+
+- (IBAction) cancelPostRegVoltageAction:(id)sender
+{
+    [confirmPostRegVoltagePanel orderOut:nil];
+    [NSApp endSheet:confirmPostRegVoltagePanel];
+}
+
+- (NSMutableDictionary*) getSAPModeStatus
+{
+    // get set points and measured values to actually check status
+    NSMutableDictionary* dict = [NSMutableDictionary dictionary];
+    [dict setValue:@"OK" forKey:@"eastStatus"];
+    [dict setValue:@"OK" forKey:@"westStatus"];
+    NSMutableString* s = [NSMutableString string];
+    int voltages[6] = {125, 25, 10, 2, 45, 105};
+    for(int i=10; i<15; i++){
+        [s appendFormat:@"Index %d: Set Point: %d V Measured: %.1f V", i, voltages[i-10], 0.0];
+        if(i < 14) [s appendString:@"\n"];
+    }
+    [dict setValue:s forKey:@"statusString"];
+    return dict;
+}
+
+- (IBAction) confirmSAPModeAction:(id)sender
+{
+    NSMutableDictionary* dict = [self getSAPModeStatus];
+    [eastConeTextField setToolTip:[dict objectForKey:@"statusString"]];
+    [westConeTextField setToolTip:[dict objectForKey:@"statusString"]];
+    [setEwSteepConeTextField setStringValue:@""];
+    [setEwSteepConeTextField setEnabled:NO];
+    [eastConeTextField setStringValue:[dict objectForKey:@"eastStatus"]];
+    [westConeTextField setStringValue:[dict objectForKey:@"westStatus"]];
+    [eastConeTextField setTextColor:[NSColor greenColor]];
+    [westConeTextField setTextColor:[NSColor greenColor]];
+    [confirmSAPModePanel orderOut:nil];
+    [NSApp endSheet:confirmSAPModePanel];
+}
+
+- (IBAction) cancelSAPModeAction:(id)sender
+{
+    [sapModeButton setState:![sapModeButton state]];
+    [confirmSAPModePanel orderOut:nil];
+    [NSApp endSheet:confirmSAPModePanel];
+}
+
+- (IBAction) sapModeAction:(id)sender
+{
+    if([sender state]){
+        [self endEditing];
+        [[self window] beginSheet:confirmSAPModePanel completionHandler:nil];
+    }
+    else{
+        [eastConeTextField setToolTip:@""];
+        [westConeTextField setToolTip:@""];
+        [setEwSteepConeTextField setEnabled:YES];
+        [eastConeTextField setTextColor:[NSColor textColor]];
+        [westConeTextField setTextColor:[NSColor textColor]];
+        [eastConeTextField setStringValue:[NSString stringWithFormat:@"%f",
+                                           [model readSteepConesEastVoltage]]];
+        [westConeTextField setStringValue:[NSString stringWithFormat:@"%f",
+                                           [model readSteepConesWestVoltage]]];
+    }
+}
+
 - (IBAction) postRegConfigAction:(id)sender
 {
-    NSLog([NSString stringWithFormat:@"%i\n", (int) [sender tag]]);
     [model setPostRegConfig:(int)[sender tag]];
 }
 
 - (IBAction) postRegPrecisionAction:(id)sender
 {
     [model setPostRegPrecision:[[sender stringValue] doubleValue]];
+}
+
+- (IBAction) postRegEnabledAction:(id)sender
+{
+    [model setPostRegEnabled:[[sender stringValue] boolValue]];
+}
+
+- (IBAction) postRegAPREnabledAction:(id)sender
+{
+    [model setPostRegAPREnabled:[[sender stringValue] boolValue]];
+}
+
+- (IBAction) postRegAPRPrecisionAction:(id)sender
+{
+    [model setPostRegAPRPrecision:[[sender stringValue] doubleValue]];
+}
+
+- (IBAction) postRegAPRTimeoutAction:(id)sender
+{
+    [model setPostRegAPRTimeout:[[sender stringValue] doubleValue]];
 }
 
 - (IBAction) postRegDefSFAction:(id)sender

@@ -55,9 +55,11 @@
     IBOutlet NSBox* mainSpecBox;
     IBOutlet NSBox* preSpecBox;
     IBOutlet NSTextField* retardingPotentialTextField;
+    IBOutlet NSTextField* targetPotentialTextField;
     IBOutlet NSTextField* postRegTextField;
     IBOutlet NSTextField* pollTimeTextField;
     IBOutlet NSTextField* mainSpecVoltageTextField;
+    IBOutlet NSTextField* mainSpecPostRegVoltageTextField;
     IBOutlet NSTextField* ieCommonTextField;
     IBOutlet NSTextField* preSpecVoltageTextField;
     IBOutlet NSTextField* westConeTextField;
@@ -81,6 +83,8 @@
     IBOutlet NSButton* setNorthConeButton;
     IBOutlet NSButton* setWireElectrodeButton;
     IBOutlet NSButton* enablePostRegButton;
+    IBOutlet NSButton* enablePostRegAPRButton;
+    IBOutlet NSButton* mainSpecStopRampButton;
     IBOutlet NSButton* mainSpecOffButton;
     IBOutlet NSButton* postRegOffButton;
     IBOutlet NSButton* preSpecOffButton;
@@ -93,9 +97,18 @@
     IBOutlet NSPanel* confirmPreSpecOffPanel;
     IBOutlet NSButton* confirmPreSpecOffButton;
     IBOutlet NSButton* cancelPreSpecOffButton;
+    IBOutlet NSPanel* confirmPostRegVoltagePanel;
+    IBOutlet NSButton* confirmPostRegVoltageButton;
+    IBOutlet NSButton* cancelPostRegVoltageButton;
+    IBOutlet NSPanel* confirmSAPModePanel;
+    IBOutlet NSButton* confirmSAPModeButton;
+    IBOutlet NSButton* cancelSAPModeButton;
+    IBOutlet NSButton* sapModeButton;
     IBOutlet NSButton* currentSetPointButton;
     IBOutlet NSPopUpButton* postRegConfigPU;
     IBOutlet NSTextField* postRegPrecisionTextField;
+    IBOutlet NSTextField* postRegAPRPrecisionTextField;
+    IBOutlet NSTextField* postRegAPRTimeoutTextField;
     IBOutlet NSTextField* postRegDefSFTextField;
     IBOutlet NSTextField* vmScaleFactorTextField;
 }
@@ -123,12 +136,19 @@
 - (void) postRegulationPointRemoved:(NSNotification*)aNote;
 - (void) updatePostRegulationTable;
 - (void) mainSpecRamping:(NSNotification*)aNote;
+- (void) mainSpecPostRegRamping:(NSNotification*)aNote;
+- (void) mainSpecPostRegAPRRamping:(NSNotification*)aNote;
 - (void) mainSpecRampSuccess:(NSNotification*)aNote;
 - (void) mainSpecRampFailure:(NSNotification*)aNote;
 - (void) estimatingScaleFactor:(NSNotification*)aNote;
 - (void) postRegPrecisionChanged:(NSNotification*)aNote;
+- (void) postRegEnabledChanged:(NSNotification*)aNote;
+- (void) postRegAPREnabledChanged:(NSNotification*)aNote;
+- (void) postRegAPRPrecisionChanged:(NSNotification*)aNote;
+- (void) postRegAPRTimeoutChanged:(NSNotification*)aNote;
 - (void) postRegConfigChanged:(NSNotification*)aNote;
 - (void) postRegDefSFChanged:(NSNotification*)aNote;
+- (void) ieSAPModeChanged:(NSNotification*)aNote;
 - (void) vmScaleFactorChanged:(NSNotification*)aNote;
 
 #pragma mark ***Actions
@@ -165,18 +185,29 @@
 - (IBAction) setSouthConeAction:(id)sender;
 - (IBAction) setNorthConeAction:(id)sender;
 - (IBAction) setWireElectrodeAction:(id)sender;
+- (IBAction) mainSpecStopRampAction:(id)sender;
+- (IBAction) mainSpecOffAction:(id)sender;
 - (IBAction) mainSpecOffAction:(id)sender;
 - (IBAction) confirmMainSpecOffAction:(id)sender;
 - (IBAction) cancelMainSpecOffAction:(id)sender;
 - (IBAction) postRegOffAction:(id)sender;
 - (IBAction) confirmPostRegOffAction:(id)sender;
 - (IBAction) cancelPostRegOffAction:(id)sender;
+- (IBAction) confirmPostRegVoltageAction:(id)sender;
+- (IBAction) cancelPostRegVoltageAction:(id)sender;
+- (IBAction) confirmSAPModeAction:(id)sender;
+- (IBAction) cancelSAPModeAction:(id)sender;
+- (IBAction) sapModeAction:(id)sender;
 - (IBAction) preSpecOffAction:(id)sender;
 - (IBAction) confirmPreSpecOffAction:(id)sender;
 - (IBAction) cancelPreSpecOffAction:(id)sender;
 - (IBAction) currentSetPointAction:(id)sender;
 - (IBAction) postRegConfigAction:(id)sender;
 - (IBAction) postRegPrecisionAction:(id)sender;
+- (IBAction) postRegEnabledAction:(id)sender;
+- (IBAction) postRegAPREnabledAction:(id)sender;
+- (IBAction) postRegAPRPrecisionAction:(id)sender;
+- (IBAction) postRegAPRTimeoutAction:(id)sender;
 - (IBAction) postRegDefSFAction:(id)sender;
 - (IBAction) vmScaleFactorAction:(id)sender;
 
