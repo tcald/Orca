@@ -2256,6 +2256,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
     if(!status) s = @"off";
     NSLog([NSString stringWithFormat:@"ORHVcRIO: turning %@ PID regulation\n", s]);
     [self setSetPoint:[self spIndex:@"postRegulationPIDStatus"] withValue:status];
+    [self writeSetpoints];
 }
 
 - (void) setPostRegPrecision:(double)value
@@ -2627,7 +2628,7 @@ static NSString* itemsToShip[kNumToShip*2] = {
         return;
     }
     else if(stepCount * pollTime >= postRegAPRTimeout){
-        NSLog(@"ORHVcRIO: timed out ramping main spectrometer voltage to %.4f V with APR precision of %0.4 V\n",
+        NSLog(@"ORHVcRIO: timed out ramping main spectrometer voltage to %.4f V with APR precision of %0.4f V\n",
               [[dict objectForKey:@"setPoint"] doubleValue], postRegAPRPrecision);
         [dict release];
         mainSpecPostRegAPRRamping = NO;
